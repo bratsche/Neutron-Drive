@@ -1,8 +1,6 @@
-import webapp2
+import os
 
-class MainPage(webapp2.RequestHandler):
-  def get(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-    self.response.out.write('Hello, webapp World!')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'ndrive.settings'
 
-app = webapp2.WSGIApplication([('/', MainPage)], debug=True)
+import django.core.handlers.wsgi
+app = django.core.handlers.wsgi.WSGIHandler()

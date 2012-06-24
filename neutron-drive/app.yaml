@@ -8,3 +8,6 @@ handlers:
 - url: /.*
   script: main.app
   
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'ndrive.settings'
+  
