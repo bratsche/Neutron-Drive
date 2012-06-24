@@ -1,0 +1,3 @@
+[submodule "neutron-drive/private"]
+	path = neutron-drive/private
+	url = git@bitbucket.org:pizzapanther/ndriveprivate.git

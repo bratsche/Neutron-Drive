@@ -117,4 +117,4 @@ LOGGING = {
     }
 }
 
-from private.ndrive import *
+from private.settings import *
