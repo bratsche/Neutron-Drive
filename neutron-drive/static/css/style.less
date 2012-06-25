@@ -383,3 +383,76 @@ a.button {
 }
 /*** end ***/
 
+.well_slideshow {
+  width: 598px;
+  height: 362px;
+  border: 1px solid @linkColor;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 20px 0;
+  
+  .title {
+    font-weight: bold;
+  }
+  
+  .slides {
+    width: 598px;
+    height: 362px;
+    
+    .slide {
+      position: absolute;
+      width: 598px;
+      height: 362px;
+      top: 10px;
+      
+      transition: left 1s ease-in-out;
+      -webkit-transition: left 1s ease-in-out;
+      -moz-transition: left 1s ease-in-out;
+      -o-transition: left 1s ease-in-out;
+      -ms-transition: left 1s ease-in-out;
+      
+      .left_side {
+        float: left;
+      }
+      
+      .right_side {
+        float: right;
+      }
+      
+      .dots {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        width: 598px;
+        font-size: 50px;
+        line-height: 15px;
+        
+        span.hl {
+          color: @linkColor;
+        }
+      }
+      
+      &.notrans {
+        transition-property: none;
+        -moz-transition-property: none;
+        -webkit-transition-property: none;
+        -o-transition-property: none;
+        -ms-transition-property: none;
+      }
+      
+      &.current {
+        left: 10px;
+      }
+      
+      &.next {
+        left: 618px;
+      }
+      
+      &.prev {
+        left: -618px;
+      }
+    }
+  }
+}
+

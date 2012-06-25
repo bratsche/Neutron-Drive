@@ -1,1 +1,83 @@
 {% extends "main/master.html" %}{% load static %}
+{% block content %}
+<h1>Welcome to Neutron Drive!</h1>
+<h3 style="margin: 0 0 20px 0;">
+  A web based IDE for Google Drive.
+</h3>
+<div class="well_slideshow" id="latest_slides">
+  <div class="slides">
+    <div class="slide current">
+      <div class="left_side">
+        Narf
+      </div>
+      <div class="right_side">
+        right
+      </div>
+      <div class="clear"></div>
+      <div class="dots">
+        <span class="hl">&middot;</span>
+        <span>&middot;</span>
+        <span>&middot;</span>
+      </div>
+    </div>
+    <div class="slide next">
+      <div class="left_side">
+        Narf
+      </div>
+      <div class="right_side">
+        right
+      </div>
+      <div class="clear"></div>
+      <div class="dots">
+        <span>&middot;</span>
+        <span class="hl">&middot;</span>
+        <span>&middot;</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function slideshow_next (selector, to) {
+    var ci = $(selector + '.current').index();
+    var tot = $(selector).length;
+    
+    var nci = ci + 1;
+    if (nci >= tot) { nci = 0; }
+    
+    $(selector).eq(ci).removeClass('current');
+    $(selector).eq(ci).addClass('prev');
+    
+    var nto = 0;
+    if ($(selector).eq(nci).hasClass('prev')) {
+      $(selector).eq(nci).addClass('notrans');
+      $(selector).eq(nci).addClass('next');
+      $(selector).eq(nci).removeClass('prev');
+      nto = 100;
+    }
+    
+    setTimeout(function () {
+      $(selector).eq(nci).removeClass('notrans');
+      $(selector).eq(nci).removeClass('next');
+      $(selector).eq(nci).addClass('current');
+    }, nto);
+    
+    setTimeout(function () { slideshow_next (selector, to); }, to);
+  }
+  
+  $(document).ready(function () { setTimeout(function () { slideshow_next('#latest_slides .slide', 7000) }, 7000); });
+</script>
+<p>
+  Neutron Drive is based on <a href="http://ace.ajax.org/">Ace Editor</a> and has the following features:
+  <ul>
+    <li>Syntax highlighting</li>
+    <li>Auto indentation and outdent</li>
+    <li>Themes</li>
+    <li>File browser</li>
+    <li>Tabbed interface</li>
+    <li>Search and Replace</li>
+  </ul>
+</p>
+<p>
+  For a more versatile web based IDE that you can run on your personal server, see <a href="http://neutronide.com/">Neutron IDE</a>.
+</p>
+{% endblock %}
