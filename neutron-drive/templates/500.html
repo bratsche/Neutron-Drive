@@ -1,2 +1,4 @@
-{% load static %}
-<img src="{% static "img/500.jpg" %}" alt="500 Error">
+{% extends "main/master.html" %}{% load static %}
+{% block body %}
+<img src="{% static "img/500.jpg" %}" alt="500 Error" style="margin: 20px auto; display: block;">
+{% endblock %}

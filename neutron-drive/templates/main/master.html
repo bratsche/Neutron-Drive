@@ -21,7 +21,7 @@
             <a href="/"><img src="{% static "img/neutron_logo.png" %}" alt="Neutron"></a>
             <div class="h">
               <h1><a href="/">Neutron Drive</a></h1>
-              <h2>Web IDE for your Google Drive</h2>
+              <h2>A Web IDE for your Google Drive</h2>
             </div>
             <div class="clear"></div>
           </div>
@@ -29,8 +29,8 @@
         <nav>
           <div class="wrapper">
             {% block nav %}
-            <a href="">About</a>
-            <a href="">Blog</a>
+            <a href="{% url "about" %}">About</a>
+            <a href="http://neutronide.com/blog/">Blog</a>
             {% endblock %}
             <div class="clear"></div>
           </div>
@@ -41,6 +41,7 @@
       </div>
       <div id="main">
         <div class="wrapper">
+          {% block body %}
           <div id="content">
             {% block content %}{% endblock %}
           </div>
@@ -50,6 +51,7 @@
             {% endblock %}
           </div>
           <div class="clear"></div>
+          {% endblock %}
         </div>
       </div>
       <div id="footer">

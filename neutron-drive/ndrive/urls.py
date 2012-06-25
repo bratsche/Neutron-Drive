@@ -3,6 +3,9 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
   (r'^favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
+  
+  url(r'^about/$', 'ndrive.main.views.about', name='about'),
   url(r'^$', 'ndrive.main.views.home', name='home'),
+  
   # url(r'^ndrive/', include('ndrive.foo.urls')),
 )

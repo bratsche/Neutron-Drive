@@ -1,2 +1,4 @@
-{% load static %}
-<img src="{% static "img/404.jpg" %}" alt="404 Page Not Found">
+{% extends "main/master.html" %}{% load static %}
+{% block body %}
+<img src="{% static "img/404.jpg" %}" alt="404 Page Not Found" style="margin: 20px auto; display: block;">
+{% endblock %}
