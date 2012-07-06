@@ -83,15 +83,21 @@ class DriveAuth (object):
     uri = flow.step1_get_authorize_url(flow.redirect_uri)
     return http.HttpResponseRedirect(uri)
     
-def edit (request):
+def edit_old (request):
   da = DriveAuth(request)
   creds = da.get_credentials()
-  if not creds:
-    return da.redirect_auth()
-    
-  response = TemplateResponse(request, 'main/edit.html', {})
+  if creds is None:
+    creds = GetSessionCredentials(request)
+    if creds is None:
+      return da.redirect_auth()
+      
+  response = TemplateResponse(request, 'main/edit_old.html', {})
   response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT)
   
+  return response
+  
+def edit (request):
+  response = TemplateResponse(request, 'main/edit.html', {})
   return response
   
 def GetSessionCredentials (request):
@@ -105,17 +111,11 @@ def GetSessionCredentials (request):
     
   return None
   
-def CreateDrive (request):
-  
-  if creds:
-    return CreateService('drive', 'v1', creds)
-    
-  return None
-  
 def shatner (request):
   creds = GetSessionCredentials(request)
-  import logging
-  logging.info(creds)
+  if creds is None:
+    return JsonResponse({'status': 'auth_needed'})
+    
   service = CreateService('drive', 'v1', creds)
   
   if service is None:
