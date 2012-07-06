@@ -77,11 +77,12 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  'ndrive.main.middleware.DriveAuth',
+  'django.middleware.common.CommonMiddleware',
+  'django.middleware.csrf.CsrfViewMiddleware',
+  
+  # Uncomment the next line for simple clickjacking protection:
+  # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'ndrive.urls'
@@ -130,8 +131,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
   "ndrive.main.context.site_context",
 )
 
+USERID_COOKIE = 'ndrive-userid'
+
 from private.settings import *
 
-if os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+if os.environ.has_key('SERVER_SOFTWARE') and os.environ['SERVER_SOFTWARE'].startswith('Dev'):
   from ndrive.settings.development import *
   
