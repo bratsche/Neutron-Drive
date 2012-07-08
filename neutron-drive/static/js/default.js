@@ -33,6 +33,10 @@ var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
 
+$(document).ready(function () {
+  set_sizes();
+});
+
 function response_ok (data) {
   if (data.status == 'ok') { return true; }
   else if (data.status == 'no_service') { alert('Google Drive service has been interrupted.  Please try again later.'); }
@@ -45,15 +49,39 @@ function response_ok (data) {
 
 function add_tab (data, textStatus, jqXHR) {
   if (response_ok(data)) {
-    //todo: load ace editor
     console.log(data);
     
-    var sess = new EditSession(data.content); 
-    sess.setUndoManager(new UndoManager());
-    Editor.setSession(sess);
+    var session = new EditSession(data.file.content); 
+    session.setUndoManager(new UndoManager());
+    Editor.setSession(session);
     
-    var mode = 'html';
+    var mode = 'text';
+    for (ext in FILE_EXTS) {
+      if (ext == data.file.fileExtension) {
+        mode = FILE_EXTS[ext];
+      }
+    }
+    
     var Mode = require("ace/mode/" + mode).Mode;
-    sess.setMode(new Mode());
+    session.setMode(new Mode());
+    set_sizes();
+    Editor.focus();
+    
+    ndrive.tabs[data.file.id] = {
+      name: data.file.title,
+      session: session
+    }
+    //todo: add tab
   }
+}
+
+function set_sizes () {
+  var winh = $(window).height();
+  var winw = $(window).width();
+  var toph = $("#top_wrapper").height();
+  
+  $('#ace_div').width(winw);
+  $('#ace_div').height(winh - toph);
+  
+  Editor.resize();
 }

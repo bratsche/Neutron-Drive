@@ -15,7 +15,7 @@ from oauth2client.appengine import simplejson as json
 
 from ndrive.main.models import Credentials
 from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES
-from ndrive.settings.editor import MODES, THEMES, FILE_EXTS
+from ndrive.settings.editor import MODES, THEMES
 
 def home (request):
   c = {}
