@@ -1,12 +1,10 @@
 import json
-import httplib2
+import logging
 
 from django import http
 from django.conf import settings
 from django.template.response import TemplateResponse
-
-from apiclient.discovery import build
-from apiclient.http import MediaUpload
+from django.core.urlresolvers import reverse
 
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.client import FlowExchangeError
@@ -16,13 +14,8 @@ from oauth2client.appengine import StorageByKeyName
 from oauth2client.appengine import simplejson as json
 
 from ndrive.main.models import Credentials
-from ndrive.main.utils import JsonResponse
-
-ALL_SCOPES = (
-  'https://www.googleapis.com/auth/drive.file '
-  'https://www.googleapis.com/auth/userinfo.email '
-  'https://www.googleapis.com/auth/userinfo.profile'
-)
+from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES
+from ndrive.settings.editor import MODES, THEMES, FILE_EXTS
 
 def home (request):
   c = {}
@@ -31,11 +24,7 @@ def home (request):
 def about (request):
   return TemplateResponse(request, 'main/about.html', {})
   
-def CreateService(service, version, creds):
-  http = httplib2.Http()
-  creds.authorize(http)
-  return build(service, version, http=http)
-  
+
 class DriveAuth (object):
   def __init__ (self, request):
     self.request = request
@@ -59,6 +48,10 @@ class DriveAuth (object):
     return flow
 
   def get_credentials (self):
+    creds = self.get_session_credentials()
+    if creds:
+      return creds
+      
     code = self.request.REQUEST.get('code', '')
     if not code:
       return None
@@ -77,6 +70,18 @@ class DriveAuth (object):
     StorageByKeyName(Credentials, self.userid, 'credentials').put(creds)
     return creds
     
+  def get_session_credentials (self):
+    userid = self.request.get_signed_cookie(settings.USERID_COOKIE, default=None, salt=settings.SALT)
+    if userid:
+      creds = StorageByKeyName(Credentials, userid, 'credentials').get()
+      if creds and creds.invalid:
+        return None
+        
+      self.userid = userid
+      return creds
+      
+    return None
+    
   def redirect_auth (self):
     flow = self.CreateOAuthFlow()
     flow.scope = ALL_SCOPES
@@ -87,74 +92,84 @@ def edit_old (request):
   da = DriveAuth(request)
   creds = da.get_credentials()
   if creds is None:
-    creds = GetSessionCredentials(request)
-    if creds is None:
-      return da.redirect_auth()
-      
+    return da.redirect_auth()
+    
   response = TemplateResponse(request, 'main/edit_old.html', {})
   response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT)
   
   return response
   
 def edit (request):
-  response = TemplateResponse(request, 'main/edit.html', {})
+  da = DriveAuth(request)
+  creds = da.get_credentials()
+  
+  if creds is None:
+    return da.redirect_auth()
+    
+  code = request.REQUEST.get('code', '')
+  if code:
+    response = http.HttpResponseRedirect(reverse('edit'))
+    
+  else:
+    c = {
+      'MODES': MODES,
+      'NDEBUG': settings.DEBUG,
+      'CLIENT_ID': settings.GOOGLE_API_CLIENT_ID.split('.')[0],
+    }
+    response = TemplateResponse(request, 'main/edit.html', c)
+    
+  response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT, max_age=settings.MAX_AGE)
   return response
   
-def GetSessionCredentials (request):
-  userid = request.get_signed_cookie(settings.USERID_COOKIE, default=None, salt=settings.SALT)
-  if userid:
-    creds = StorageByKeyName(Credentials, userid, 'credentials').get()
-    if creds and creds.invalid:
-      return None
-  
-    return creds
-    
-  return None
-  
 def shatner (request):
-  creds = GetSessionCredentials(request)
+  da = DriveAuth(request)
+  creds = da.get_session_credentials()
   if creds is None:
     return JsonResponse({'status': 'auth_needed'})
     
-  service = CreateService('drive', 'v1', creds)
+  task = request.POST.get('task', '')
+  if task in ('open', 'new', 'save'):
+    service = CreateService('drive', 'v1', creds)
+    
+    if service is None:
+      return JsonResponse({'status': 'no_service'})
+      
+    if task == 'open':
+      file_id = request.POST.get('file_id', '')
+      if file_id:
+        try:
+          f = service.files().get(id=file_id).execute()
+          
+        except AccessTokenRefreshError:
+          return JsonResponse({'status': 'auth_needed'})
+          
+        downloadUrl = f.get('downloadUrl')
+        
+        if downloadUrl:
+          resp, f['content'] = service._http.request(downloadUrl)
+          
+        else:
+          f['content'] = ''
+          
+        return JsonResponse({'status': 'ok', 'file': f})
+        
+      return JsonResponse({'status': 'Invalid File'})
+      
+    elif task == 'save':
+      data = json.loads(request.body)
+    
+      resource = {
+        'title': data['title'],
+        'description': data['description'],
+        'mimeType': data['mimeType']
+      }
+      
+      try:
+        resource = service.files().insert(body=resource, media_body=MediaInMemoryUpload(data.get('content', ''), data['mimeType'])).execute()
+        return JsonResponse({'status': 'ok', 'fileid': resource['id']})
+        
+      except AccessTokenRefreshError:
+        return JsonResponse({'status': 'auth_needed'})
+        
+  return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
   
-  if service is None:
-    return JsonResponse({'status': 'no_service'})
-    
-  data = json.loads(request.body)
-
-  resource = {
-    'title': data['title'],
-    'description': data['description'],
-    'mimeType': data['mimeType']
-  }
-  
-  try:
-    resource = service.files().insert(body=resource, media_body=MediaInMemoryUpload(data.get('content', ''), data['mimeType'])).execute()
-    return JsonResponse({'status': 'ok', 'fileid': resource['id']})
-    
-  except AccessTokenRefreshError:
-    return JsonResponse({'status': 'auth_needed'})
-    
-class MediaInMemoryUpload(MediaUpload):
-  def __init__ (self, body, mimetype='application/octet-stream', chunksize=256*1024, resumable=False):
-    self._body = body
-    self._mimetype = mimetype
-    self._resumable = resumable
-    self._chunksize = chunksize
-
-  def chunksize (self):
-    return self._chunksize
-
-  def mimetype(self):
-    return self._mimetype
-
-  def size(self):
-    return len(self._body)
-
-  def resumable(self):
-    return self._resumable
-
-  def getbytes(self, begin, length):
-    return self._body[begin:begin + length]
-    

@@ -1,0 +1,34 @@
+@import url(http://fonts.googleapis.com/css?family=VT323);
+
+body {
+  background-color: #F7F7F9;
+}
+
+nav {
+  overflow: hidden;
+  width: 100%;
+  height: 28px;
+  text-overflow: ellipsis;
+  padding: 5px 0;
+}
+
+nav table {
+  border: 0;
+  border-collapse: collapse;
+}
+
+nav table td {
+  padding: 0 10px;
+  vertical-align: middle;
+}
+
+nav .name {
+  font-family: 'VT323', cursive;
+  font-size: 24px;
+}
+
+#ace_div {
+  border: 1px solid #0F0;
+  height: 600px;
+  width: 800px;
+}

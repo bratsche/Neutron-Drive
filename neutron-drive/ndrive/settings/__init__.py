@@ -128,10 +128,10 @@ LOGGING = {
 TEMPLATE_CONTEXT_PROCESSORS = (
   "django.core.context_processors.debug",
   "django.core.context_processors.request",
-  "ndrive.main.context.site_context",
 )
 
 USERID_COOKIE = 'ndrive-userid'
+MAX_AGE = 60 * 60 * 36  #36 hours
 
 from private.settings import *
 
