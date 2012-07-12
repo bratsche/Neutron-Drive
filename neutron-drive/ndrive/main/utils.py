@@ -12,7 +12,10 @@ ALL_SCOPES = (
   'https://www.googleapis.com/auth/userinfo.profile'
 )
 
-def JsonResponse (data):
+def JsonResponse (data={'status': 'ok'}, ok=None):
+  if ok:
+    data.update(ok)
+    
   return http.HttpResponse(json.dumps(data), content_type='application/json')
   
 def CreateService (service, version, creds):

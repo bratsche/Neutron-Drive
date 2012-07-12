@@ -156,20 +156,33 @@ def shatner (request):
       return JsonResponse({'status': 'Invalid File'})
       
     elif task == 'save':
-      data = json.loads(request.body)
-    
+      name = request.POST.get('name')
+      mimetype = request.POST.get('mimetype')
+      content = request.POST.get('content')
+      file_id = request.POST.get('file_id', '')
+      new_file = request.POST.get('new_file')
+      
       resource = {
-        'title': data['title'],
-        'description': data['description'],
-        'mimeType': data['mimeType']
+        'title': name,
+        'mimeType': mimetype
       }
       
+      file = MediaInMemoryUpload(content, mimetype)
+      
       try:
-        resource = service.files().insert(body=resource, media_body=MediaInMemoryUpload(data.get('content', ''), data['mimeType'])).execute()
-        return JsonResponse({'status': 'ok', 'fileid': resource['id']})
-        
+        if new_file == 'false':
+          google = service.files().update(id=file_id, newRevision=True, body=resource, media_body=file).execute()
+          
+        else:
+          google = service.files().insert(body=resource, media_body=file).execute()
+          
       except AccessTokenRefreshError:
         return JsonResponse({'status': 'auth_needed'})
         
+      else:
+        file_id = google['id']
+        
+      return JsonResponse(ok={'file_id': file_id})
+      
   return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
   

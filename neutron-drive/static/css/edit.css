@@ -31,3 +31,7 @@ nav .name {
   height: 600px;
   width: 800px;
 }
+
+#message_center {
+  color: #d14;
+}

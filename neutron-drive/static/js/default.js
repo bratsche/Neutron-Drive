@@ -29,6 +29,43 @@ function pickerCallback (data) {
   }
 }
 
+function clear_message () {
+  $('#message_center').html('');
+}
+
+function save_current () {
+  var content = Editor.getSession().getValue();
+  var file_id;
+  var name;
+  var mimetype;
+  
+  //todo: get current tab
+  for (id in ndrive.tabs) {
+    file_id = id;
+    name = ndrive.tabs[id].name;
+    mimetype = ndrive.tabs[id].mimetype;
+  }
+  //
+  
+  $('#message_center').html('Saving ' + name + ' ... ');
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.negotiator,
+    data: {
+      file_id: file_id,
+      task: 'save',
+      content: content,
+      new_file: 'false',
+      name: name,
+      mimetype: mimetype
+    },
+    success: response_ok,
+    error: function () { alert('Error saving file ' + name); },
+    complete: clear_message
+  });
+}
+
 var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
@@ -69,8 +106,10 @@ function add_tab (data, textStatus, jqXHR) {
     
     ndrive.tabs[data.file.id] = {
       name: data.file.title,
+      mimetype: data.file.mimeType,
       session: session
     }
+    
     //todo: add tab
   }
 }
