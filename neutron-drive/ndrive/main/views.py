@@ -24,7 +24,9 @@ def home (request):
 def about (request):
   return TemplateResponse(request, 'main/about.html', {})
   
-
+def license (request):
+  return TemplateResponse(request, 'main/license.html', {})
+  
 class DriveAuth (object):
   def __init__ (self, request):
     self.request = request

@@ -5,26 +5,25 @@
 }
 
 nav {
-  overflow: hidden;
   width: 100%;
-  height: 28px;
-  text-overflow: ellipsis;
-  padding: 5px 0;
+  padding: 5px 0 0 0;
 }
 
-nav table {
-  border: 0;
-  border-collapse: collapse;
-}
-
-nav table td {
-  padding: 0 10px;
-  vertical-align: middle;
+nav .btn-toolbar > div {
+  display: inline-block;
 }
 
 nav .name {
   font-family: 'VT323', cursive;
   font-size: 24px;
+  margin: 0 10px;
+  vertical-align: top;
+  padding-top: 4px;
+}
+
+nav .btn-toolbar {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 #ace_div {
@@ -34,4 +33,5 @@ nav .name {
 
 #message_center {
   color: #d14;
+  margin: 0 10px;
 }
