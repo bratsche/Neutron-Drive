@@ -4,6 +4,10 @@
   background-color: #E8E8E8;
 }
 
+.clear {
+  clear: both;
+}
+
 nav {
   width: 100%;
   padding: 5px 0 0 0;
@@ -34,4 +38,19 @@ nav .btn-toolbar {
 #message_center {
   color: #d14;
   margin: 0 10px;
+}
+
+.emodes div {
+  width: 158px;
+  margin: 0 20px 2px 0;
+  float: left;
+  height: 22px;
+}
+
+.emodes div:nth-child(3n + 3) {
+  margin-right: 0;
+}
+
+.emodes div label {
+  display: inline-block;
 }

@@ -103,6 +103,7 @@ function add_tab (data, textStatus, jqXHR) {
     session.setMode(new Mode());
     set_sizes();
     Editor.focus();
+    $("#emode_" + mode).get(0).checked = true;
     
     ndrive.tabs[data.file.id] = {
       name: data.file.title,
@@ -123,4 +124,13 @@ function set_sizes () {
   $('#ace_div').height(winh - toph);
   
   Editor.resize();
+}
+
+function set_editor_mode (mode) {
+  var sess = Editor.getSession();
+  var Mode = require("ace/mode/" + mode).Mode;
+  sess.setMode(new Mode());
+  
+  $('#modeModal').modal('hide');
+  Editor.focus();
 }

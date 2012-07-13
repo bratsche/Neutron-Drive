@@ -16,3 +16,25 @@
     <a href="#" class="btn" data-dismiss="modal">Close</a>
   </div>
 </div>
+<div class="modal fade hide" id="modeModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Editor Mode</h3>
+  </div>
+  <div class="modal-body">
+    <div class="emodes">
+      {% for mode in MODES %}
+      <div>
+        <label class="radio" for="emode_{{ mode.0 }}">
+          <input type="radio" name="emode" value="{{ mode.0 }}" id="emode_{{ mode.0 }}" onclick="set_editor_mode('{{ mode.0 }}')">
+          {{ mode.1 }}
+        </label>
+      </div>
+      {% endfor %}
+      <div class="clear"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+  </div>
+</div>
