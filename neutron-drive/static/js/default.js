@@ -134,3 +134,9 @@ function set_editor_mode (mode) {
   $('#modeModal').modal('hide');
   Editor.focus();
 }
+
+function update_prefs () {
+  $('#prefModal').modal('hide');
+  Editor.focus();
+  return false;
+}

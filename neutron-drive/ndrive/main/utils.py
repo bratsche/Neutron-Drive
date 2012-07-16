@@ -12,6 +12,21 @@ ALL_SCOPES = (
   'https://www.googleapis.com/auth/userinfo.profile'
 )
 
+def get_or_create (Model, queries, defaults={}):
+  query = Model.all()
+  for q in queries:
+    query.filter(*q)
+    
+  entity = query.get()
+  if entity:
+    created = False
+    
+  else:
+    created = True
+    entity = Model(**defaults)
+    
+  return created, entity
+  
 def JsonResponse (data={'status': 'ok'}, ok=None):
   if ok:
     data.update(ok)

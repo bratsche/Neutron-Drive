@@ -54,3 +54,8 @@ nav .btn-toolbar {
 .emodes div label {
   display: inline-block;
 }
+
+#prefModal table {
+  width: 100%;
+  border-collapse: collapse;
+}

@@ -13,8 +13,8 @@ from oauth2client.client import AccessTokenRefreshError
 from oauth2client.appengine import StorageByKeyName
 from oauth2client.appengine import simplejson as json
 
-from ndrive.main.models import Credentials
-from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES
+from ndrive.main.models import Credentials, Preferences, ETHEMES, ESIZES, EKBINDS, EWRAPS
+from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create
 from ndrive.settings.editor import MODES, THEMES
 
 def home (request):
@@ -67,8 +67,13 @@ class DriveAuth (object):
       return None
       
     users_service = CreateService('oauth2', 'v2', creds)
-    self.userid = users_service.userinfo().get().execute().get('id')
-    
+    info = users_service.userinfo().get().execute()
+    self.userid = info.get('id')
+    email = info.get('email')
+    created, self.prefs = get_or_create(Preferences, queries=(('userid =', self.userid),), defaults={'userid': self.userid, 'email': email})
+    if created:
+      self.prefs.put()
+      
     StorageByKeyName(Credentials, self.userid, 'credentials').put(creds)
     return creds
     
@@ -80,6 +85,7 @@ class DriveAuth (object):
         return None
         
       self.userid = userid
+      self.prefs = Preferences.all().filter('userid =', self.userid).get()
       return creds
       
     return None
@@ -108,6 +114,8 @@ def edit (request):
   if creds is None:
     return da.redirect_auth()
     
+  logging.info(dir(creds))
+  
   code = request.REQUEST.get('code', '')
   if code:
     response = http.HttpResponseRedirect(reverse('edit'))
@@ -117,6 +125,11 @@ def edit (request):
       'MODES': MODES,
       'NDEBUG': settings.DEBUG,
       'CLIENT_ID': settings.GOOGLE_API_CLIENT_ID.split('.')[0],
+      'prefs': da.prefs,
+      'themes': ETHEMES,
+      'sizes': ESIZES,
+      'binds': EKBINDS,
+      'wraps': EWRAPS,
     }
     response = TemplateResponse(request, 'main/edit.html', c)
     
