@@ -134,6 +134,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 USERID_COOKIE = 'ndrive-userid'
 MAX_AGE = 60 * 60 * 36  #36 hours
 
+CSRF_COOKIE_SECURE = True
+
 from private.settings import *
 
 if os.environ.has_key('SERVER_SOFTWARE') and os.environ['SERVER_SOFTWARE'].startswith('Dev'):

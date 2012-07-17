@@ -1,5 +1,6 @@
 import json
 import logging
+import datetime
 
 from django import http
 from django.conf import settings
@@ -131,7 +132,8 @@ def edit (request):
     }
     response = TemplateResponse(request, 'main/edit.html', c)
     
-  response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT, max_age=settings.MAX_AGE)
+  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=settings.MAX_AGE)
+  response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT)
   return response
   
 def prefs (request):
