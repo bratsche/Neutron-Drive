@@ -69,9 +69,13 @@ function save_current () {
 var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
+set_prefs(null);
 
 $(document).ready(function () {
   set_sizes();
+  $(window).resize(function() {
+    set_sizes();
+  });
 });
 
 function response_ok (data) {
@@ -102,6 +106,7 @@ function add_tab (data, textStatus, jqXHR) {
     var Mode = require("ace/mode/" + mode).Mode;
     session.setMode(new Mode());
     set_sizes();
+    set_prefs(session);
     Editor.focus();
     $("#emode_" + mode).get(0).checked = true;
     
@@ -137,6 +142,109 @@ function set_editor_mode (mode) {
 
 function update_prefs () {
   $('#prefModal').modal('hide');
+  
+  PREFS.theme = $("#id_theme").val();
+  PREFS.fontsize = $("#id_fontsize").val();
+  PREFS.keybind = $("#id_keybind").val();
+  PREFS.swrap = $("#id_swrap").val();
+  PREFS.tabsize = $("#id_tabsize").val();
+  
+  PREFS.hactive = $("#id_hactive").get(0).checked;
+  PREFS.hword = $("#id_hword").get(0).checked;
+  PREFS.invisibles = $("#id_invisibles").get(0).checked;
+  PREFS.gutter = $("#id_gutter").get(0).checked;
+  PREFS.pmargin = $("#id_pmargin").get(0).checked;
+  PREFS.softab = $("#id_softab").get(0).checked;
+  PREFS.behave = $("#id_behave").get(0).checked;
+  
+  PREFS.save_session = $("#id_save_session").get(0).checked;
+  
+  set_prefs(null);
   Editor.focus();
+  
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.prefs,
+    data: PREFS,
+    error: function () { alert('Error saving preferences'); }
+  });
+  
   return false;
 }
+
+function set_prefs (session) {
+  if (!session) {
+    session = Editor.getSession();
+  }
+  
+  load_theme = true;
+  for (i in LOADED_THEMES) {
+    if (LOADED_THEMES[i] == PREFS.theme) {
+      load_theme = false;
+      break;
+    }
+  }
+  
+  if (load_theme) {
+    $.ajax({
+      url: STATIC_URL + 'ace/src-min/theme-' + PREFS.theme + '.js',
+      dataType: "script",
+      async: false,
+    });
+    LOADED_THEMES.push(PREFS.theme);
+  }
+  
+  Editor.setTheme("ace/theme/" + PREFS.theme);
+  
+  var handler = null;
+  if (PREFS.keybind == 'emacs') {
+    handler = require("ace/keyboard/emacs").handler;
+  }
+  
+  else if (PREFS.keybind == 'vim') {
+    handler = require("ace/keyboard/vim").handler;
+  }
+  
+  Editor.setKeyboardHandler(handler);
+  
+  Editor.setHighlightActiveLine(PREFS.hactive);
+  Editor.setHighlightSelectedWord(PREFS.hword);
+  Editor.setShowInvisibles(PREFS.invisibles);
+  Editor.setBehavioursEnabled(PREFS.behave);
+  
+  Editor.renderer.setFadeFoldWidgets(false);
+  Editor.renderer.setShowGutter(PREFS.gutter);
+  Editor.renderer.setShowPrintMargin(PREFS.pmargin);
+  
+  session.setTabSize(PREFS.tabsize);
+  session.setUseSoftTabs(PREFS.softab);
+  
+  switch (PREFS.swrap) {
+    case "off":
+      session.setUseWrapMode(false);
+      Editor.renderer.setPrintMarginColumn(80);
+      break;
+      
+    case "40":
+      session.setUseWrapMode(true);
+      session.setWrapLimitRange(40, 40);
+      Editor.renderer.setPrintMarginColumn(40);
+      break;
+      
+    case "80":
+      session.setUseWrapMode(true);
+      session.setWrapLimitRange(80, 80);
+      Editor.renderer.setPrintMarginColumn(80);
+      break;
+      
+    case "free":
+      session.setUseWrapMode(true);
+      session.setWrapLimitRange(null, null);
+      Editor.renderer.setPrintMarginColumn(80);
+      break;
+  }
+  
+  $("#ace_wrapper #ace_div").css('font-size', PREFS.fontsize);
+}
+

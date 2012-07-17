@@ -114,8 +114,6 @@ def edit (request):
   if creds is None:
     return da.redirect_auth()
     
-  logging.info(dir(creds))
-  
   code = request.REQUEST.get('code', '')
   if code:
     response = http.HttpResponseRedirect(reverse('edit'))
@@ -136,6 +134,31 @@ def edit (request):
   response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT, max_age=settings.MAX_AGE)
   return response
   
+def prefs (request):
+  da = DriveAuth(request)
+  creds = da.get_session_credentials()
+  if creds is not None:
+    da.prefs.theme = request.POST.get('theme')
+    da.prefs.fontsize = request.POST.get('fontsize')
+    da.prefs.keybind = request.POST.get('keybind')
+    da.prefs.swrap = request.POST.get('swrap')
+    
+    da.prefs.tabsize = int(request.POST.get('tabsize'))
+    
+    da.prefs.hactive = request.POST.get('hactive') == 'true'
+    da.prefs.hword = request.POST.get('hword') == 'true'
+    da.prefs.invisibles = request.POST.get('invisibles') == 'true'
+    da.prefs.gutter = request.POST.get('gutter') == 'true'
+    da.prefs.pmargin = request.POST.get('pmargin') == 'true'
+    da.prefs.softab = request.POST.get('softab') == 'true'
+    da.prefs.behave = request.POST.get('behave') == 'true'
+    
+    da.prefs.save_session = request.POST.get('save_session') == 'true'
+    
+    da.prefs.put()
+    
+    return JsonResponse()
+    
 def shatner (request):
   da = DriveAuth(request)
   creds = da.get_session_credentials()
