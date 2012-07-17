@@ -31,7 +31,7 @@ jQuery(document).ajaxSend(function(event, xhr, settings) {
     }
 
     if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
-        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        xhr.setRequestHeader("X-CSRFToken", getCookie('GRASSHOPPER'));
     }
 });
 

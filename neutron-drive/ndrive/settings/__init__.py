@@ -135,6 +135,7 @@ USERID_COOKIE = 'ndrive-userid'
 MAX_AGE = 60 * 60 * 36  #36 hours
 
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_NAME = "GRASSHOPPER"
 
 from private.settings import *
 
