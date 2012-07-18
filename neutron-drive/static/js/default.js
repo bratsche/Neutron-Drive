@@ -1,3 +1,7 @@
+window.onbeforeunload = function() {
+  return 'Leaving so soon!';
+}
+
 var pickerView = new google.picker.View(google.picker.ViewId.DOCS);
 pickerView.setMimeTypes('text/plain,text/html');
 
