@@ -48,6 +48,7 @@
           </div>
           <div id="message_center"></div>
         </nav>
+        <div id="tab_bar"></div>
       </div>
       <div id="ace_wrapper">
         <div id="ace_div"></div>
@@ -65,7 +66,6 @@
     <script type="text/javascript" src="{% static "ace/src-min/keybinding-vim.js" %}"></script>
     <script type="text/javascript">
       var ndrive = {};
-      ndrive.tabs = {};
       ndrive.CLIENT_ID = {{ CLIENT_ID }};
       ndrive.negotiator = '{% url "shatner" %}';
       ndrive.prefs = '{% url "prefs" %}';
@@ -95,6 +95,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}" type="text/javascript"></script>
     <script src="{% static "js/boring_stuff.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/tabs.js" %}" type="text/javascript"></script>
     <script src="{% static "js/default.js" %}" type="text/javascript"></script>
   </body>
 </html>

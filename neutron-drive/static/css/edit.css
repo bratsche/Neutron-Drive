@@ -59,3 +59,26 @@ nav .btn-toolbar {
   width: 100%;
   border-collapse: collapse;
 }
+
+#tab_bar {
+  height: 31px;
+  overflow: hidden;
+}
+
+#tab_bar span {
+  display: inline-block;
+  border: 1px solid #333;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 5px;
+  margin: 0 5px;
+}
+
+#tab_bar span.current {
+  background-color: #050;
+}
+
+#tab_bar span.current a {
+  font-weight: bold;
+  color: #CCC;
+}

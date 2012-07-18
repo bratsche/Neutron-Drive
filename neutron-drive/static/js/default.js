@@ -17,14 +17,19 @@ function pickerCallback (data) {
       var file_id = data.docs[i].id;
       var name = data.docs[i].name;
       
-      //todo: check it already open first
-      $.ajax({
-        type: 'POST',
-        url: ndrive.negotiator,
-        data: {'file_id': file_id, 'task': 'open'},
-        success: add_tab,
-        error: function () { alert('Error opening file ' + name); }
-      });
+      if (Tabs.files.indexOf(file_id) < 0) {
+        $.ajax({
+          type: 'POST',
+          url: ndrive.negotiator,
+          data: {'file_id': file_id, 'task': 'open'},
+          success: add_tab,
+          error: function () { alert('Error opening file ' + name); }
+        });
+      }
+      
+      else {
+        Tabs.switch_tab(file_id);
+      }
     }
   }
 }
@@ -35,15 +40,13 @@ function clear_message () {
 
 function save_current () {
   var content = Editor.getSession().getValue();
-  var file_id;
   var name;
   var mimetype;
   
   //todo: get current tab
-  for (id in ndrive.tabs) {
-    file_id = id;
-    name = ndrive.tabs[id].name;
-    mimetype = ndrive.tabs[id].mimetype;
+  for (file_id in Tabs.files) {
+    name = Tabs.data[file_id].name;
+    mimetype = Tabs.data[file_id].mime;
   }
   //
   
@@ -90,8 +93,7 @@ function response_ok (data) {
 
 function add_tab (data, textStatus, jqXHR) {
   if (response_ok(data)) {
-    console.log(data);
-    
+    //console.log(data);
     var session = new EditSession(data.file.content); 
     session.setUndoManager(new UndoManager());
     Editor.setSession(session);
@@ -110,13 +112,7 @@ function add_tab (data, textStatus, jqXHR) {
     Editor.focus();
     $("#emode_" + mode).get(0).checked = true;
     
-    ndrive.tabs[data.file.id] = {
-      name: data.file.title,
-      mimetype: data.file.mimeType,
-      session: session
-    }
-    
-    //todo: add tab
+    Tabs.add_file(data.file.id, data.file.title, data.file.mimeType, session);
   }
 }
 
