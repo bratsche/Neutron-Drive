@@ -1,9 +1,10 @@
-<div class="modal fade hide" id="aboutModal">{% load url from future %}
+<div class="modal fade hide" id="aboutModal">{% load url from future %}{% load static %}
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
     <h3>About Neutron Drive - Version 12.08</h3>
   </div>
   <div class="modal-body">
+    <img src="{% static "img/neutron.png" %}" alt="" style="float: right;">
     <p>
       Brought to you by <strong>Team Hairball</strong>:
     </p>
