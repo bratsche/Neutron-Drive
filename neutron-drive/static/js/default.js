@@ -38,6 +38,14 @@ function clear_message () {
   $('#message_center').html('');
 }
 
+function close_all () {
+  if (confirm('Are you sure you wish to close all tabs?')) {
+    while (Tabs.files.length > 0) {
+      Tabs.remove_tab(Tabs.files[0]);
+    }
+  }
+}
+
 function save_current () {
   var content = Editor.getSession().getValue();
   var name;
