@@ -77,6 +77,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+  'ndrive.main.middleware.SSL',
   'ndrive.main.middleware.DriveAuth',
   'django.middleware.common.CommonMiddleware',
   'django.middleware.csrf.CsrfViewMiddleware',

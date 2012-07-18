@@ -1,7 +1,15 @@
+from django import http
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.middleware.csrf import get_token
 
+class SSL (object):
+  def process_request (self, request):
+    if settings.CSRF_COOKIE_SECURE:
+      if not request.is_secure():
+        url = request.build_absolute_uri().replace('http://', 'https://')
+        return http.HttpResponseRedirect(url)
+        
 class DriveAuth (object):
   def process_request (self, request):
     if request.method == 'GET':
