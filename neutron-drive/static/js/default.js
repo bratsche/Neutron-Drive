@@ -106,6 +106,7 @@ $(document).ready(function () {
     $("#box_wrapper > div:last-child").css('margin-left', m + 'px');
     event.stopPropagation();
     $("#dragger").css('display', 'none');
+    $('#collapse_tools').html('&#9666');
     
     setTimeout(function(){ set_sizes(); }, 0);
     setTimeout(function(){ set_sizes(); }, 100);
