@@ -1,7 +1,11 @@
 @import url(https://fonts.googleapis.com/css?family=VT323);
 
-#top_wrapper {
+.back {
   background-color: #E8E8E8;
+}
+
+#top_wrapper {
+  border-bottom: 1px solid #DDD;
 }
 
 .clear {
@@ -31,7 +35,7 @@ nav .btn-toolbar {
 }
 
 #ace_div {
-  height: 600px;
+  height: 60px;
   width: 800px;
 }
 
@@ -81,4 +85,62 @@ nav .btn-toolbar {
 #tab_bar span.current a {
   font-weight: bold;
   color: #CCC;
+}
+
+#box_wrapper {
+  float: left;
+  overflow: hidden;
+  width: 100%;
+}
+
+#box_wrapper > div:first-child {
+  float: left;
+  width: 300px;
+  overflow: hidden;
+}
+
+#box_wrapper > div:nth-child(2) {
+  border-left: 1px solid #DDD;
+  border-right: 1px solid #DDD;
+  width: 7px;
+  float: left;
+  
+  font-size: 10px;
+  text-align: center;
+  
+  display: -moz-box;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  -moz-box-orient: horizontal;
+  display: -webkit-box;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  -webkit-box-orient: horizontal;
+}
+
+#box_wrapper > div:last-child {
+  margin-left: 309px;
+}
+
+#resize {
+  cursor: col-resize;
+  width: 2px;
+  margin: 5px auto;
+  height: 20px;
+  background-color: #333;
+  border: 1px solid #333;
+  border-radius: 5px;
+}
+
+#collapse_tools {
+  cursor: pointer;
+}
+
+#dragger {
+  width: 2px;
+  border-right: 1px dotted #999;
+  position: absolute;
+  height: 100%;
+  display: none;
+  z-index: 10;
 }

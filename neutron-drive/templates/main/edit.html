@@ -6,8 +6,9 @@
     <title>Neutron Drive</title>
   </head>
   <body>
+    <div id="dragger"></div>
     <div>
-      <div id="top_wrapper">
+      <div id="top_wrapper" class="back">
         <nav>
           <div class="btn-toolbar">
             <div class="name">Neutron Drive 12.08</div>
@@ -46,10 +47,21 @@
           </div>
           <div id="message_center"></div>
         </nav>
-        <div id="tab_bar"></div>
       </div>
-      <div id="ace_wrapper">
-        <div id="ace_div"></div>
+      <div id="box_wrapper">
+        <div class="back">
+          toolbox
+        </div>
+        <div class="back vert_sep">
+          <div>
+            <div id="collapse_tools" onclick="collapse_tools()">&#9666;</div>
+            <div draggable="true" id="resize"></div>
+          </div>
+        </div>
+        <div id="ace_wrapper">
+          <div id="tab_bar" class="back"></div>
+          <div id="ace_div"></div>
+        </div>
       </div>
     </div>
     {% include "main/modals.html" %}
