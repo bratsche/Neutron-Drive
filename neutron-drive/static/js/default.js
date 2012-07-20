@@ -116,6 +116,8 @@ $(document).ready(function () {
     $("#dragger").css('display', 'block');
     $("#dragger").offset({ top: 0, left: event.x - 3});
   }, false);
+  
+  add_commands();
 });
 
 function response_ok (data) {
@@ -160,6 +162,9 @@ function set_sizes () {
   var toolw = $("#box_wrapper > div:first-child").width();
   var tabh = $("#tab_bar").height();
   
+  if (toolw <= 0) {
+    toolw = 0;
+  }
   var h = toph + 1 + tabh;
   $('#ace_div').width(winw - (toolw + 9));
   $('#box_wrapper > div').height(winh - (toph + 1));
@@ -286,11 +291,11 @@ function set_prefs (session) {
   $("#ace_wrapper #ace_div").css('font-size', PREFS.fontsize);
 }
 
-var last_width = 300;
+var last_width = 250;
 function collapse_tools () {
   var sel = '#box_wrapper > div:first-child';
   
-  if ($(sel).width() == 0) {
+  if ($(sel).width() <= 0) {
     $(sel).width(last_width);
     $('#collapse_tools').html('&#9666');
   }
@@ -304,3 +309,16 @@ function collapse_tools () {
   setTimeout(function(){ set_sizes(); }, 0);
   setTimeout(function(){ set_sizes(); }, 100);
 }
+
+function add_commands () {
+  Editor.commands.addCommand({
+      name: 'Search',
+      bindKey: {
+        win: 'Ctrl-S',
+        mac: 'Command-S',
+        sender: 'editor'
+      },
+      exec: function(env, args, request) { $('#s_search').focus(); }
+  });
+}
+

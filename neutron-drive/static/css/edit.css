@@ -4,6 +4,14 @@
   background-color: #E8E8E8;
 }
 
+h3 {
+  font-weight: normal;
+  padding: 2px 5px;
+  border-bottom: 1px solid #DDD;
+  border-top: 1px solid #DDD;
+  font-size: 15px;
+}
+
 #top_wrapper {
   border-bottom: 1px solid #DDD;
 }
@@ -95,8 +103,8 @@ nav .btn-toolbar {
 
 #box_wrapper > div:first-child {
   float: left;
-  width: 300px;
-  overflow: hidden;
+  width: 250px;
+  overflow: auto;
 }
 
 #box_wrapper > div:nth-child(2) {
@@ -119,7 +127,7 @@ nav .btn-toolbar {
 }
 
 #box_wrapper > div:last-child {
-  margin-left: 309px;
+  margin-left: 259px;
 }
 
 #resize {
@@ -143,4 +151,46 @@ nav .btn-toolbar {
   height: 100%;
   display: none;
   z-index: 10;
+}
+
+#search_form {
+  padding: 5px 10px 5px 10px;
+  margin: 0;
+}
+
+#search_form input {
+  margin-bottom: 0px;
+}
+
+#search_form .radio.f {
+  float: left;
+  margin: 0 20px 0 0;
+}
+
+#search_form .control-label {
+  float: left;
+  padding: 5px 5px 0 0 ;
+  text-align: right;
+}
+
+#search_form .controls {
+  float: left;
+}
+
+#search_form .btn {
+  margin: 0 0 5px 0;
+}
+
+#search_results em {
+  display: block;
+  padding: 10px;
+}
+
+#search_results table.table {
+  width: 100%;
+  font-size: 90%;
+}
+
+#search_results table.table td {
+  padding: 5px;
 }
