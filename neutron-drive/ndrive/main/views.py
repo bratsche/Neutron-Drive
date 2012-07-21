@@ -18,6 +18,9 @@ from ndrive.main.models import Credentials, Preferences, ETHEMES, ESIZES, EKBIND
 from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create
 from ndrive.settings.editor import MODES, THEMES
 
+def verify (request):
+  return TemplateResponse(request, 'google442b861f8353f428.html', {})
+  
 def home (request):
   c = {}
   return TemplateResponse(request, 'main/home.html', c)

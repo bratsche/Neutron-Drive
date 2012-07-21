@@ -12,6 +12,7 @@ urlpatterns = patterns('',
   url(r'^about$', 'ndrive.main.views.about', name='about'),
   url(r'^license$', 'ndrive.main.views.license', name='license'),
   
+  url(r'^google442b861f8353f428.html$', 'ndrive.main.views.verify', name='verify'),
   url(r'^$', 'ndrive.main.views.home', name='home'),
   
   # url(r'^ndrive/', include('ndrive.foo.urls')),

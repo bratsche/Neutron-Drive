@@ -5,7 +5,7 @@ from django.middleware.csrf import get_token
 
 class SSL (object):
   def process_request (self, request):
-    if settings.CSRF_COOKIE_SECURE:
+    if settings.CSRF_COOKIE_SECURE and request.path != '/google442b861f8353f428.html':
       if not request.is_secure():
         url = request.build_absolute_uri().replace('http://', 'https://')
         return http.HttpResponseRedirect(url)
