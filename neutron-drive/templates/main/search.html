@@ -3,11 +3,11 @@
   <form id="search_form" onsubmit="return do_search()">
     <div class="control-group">
       <label class="radio f" for="s_s">
-        <input type="radio" name="s_type" id="s_s" checked="">
+        <input type="radio" name="s_type" id="s_s" checked="" onclick="set_sr()">
         Search
       </label>
       <label class="radio f" for="s_sr">
-        <input type="radio" name="s_type" id="s_sr">
+        <input type="radio" name="s_type" id="s_sr" onclick="set_sr()">
         Search &amp; Replace
       </label>
       <div class="clear"></div>
@@ -52,10 +52,10 @@
     </div>
     <div>
       <button type="submit" class="btn btn-small init">Search</button>
-      <button type="button" class="btn btn-small hide next" id="s_prev">&laquo; Prev</button>
+      <button type="button" class="btn btn-small hide next" id="s_prev" onclick="search_prev()">&laquo; Prev</button>
       <button type="button" class="btn btn-small hide next" id="s_next" onclick="search_next()">Next &raquo;</button>
-      <button type="button" class="btn btn-small hide next" id="s_rnext">Replace &amp; Next &raquo;</button>
-      <button type="button" class="btn btn-small hide next" id="s_replaceall">Replace All</button>
+      <button type="button" class="btn btn-small hide next" id="s_rnext" onclick="search_replace_next()">Replace &amp; Next &raquo;</button>
+      <button type="button" class="btn btn-small hide next" id="s_replaceall" onclick="search_replace_all()">Replace All</button>
       <button type="button" class="btn btn-small hide next" id="s_newsearch" onclick="reset_search()">New Search</button>
     </div>
   </form>

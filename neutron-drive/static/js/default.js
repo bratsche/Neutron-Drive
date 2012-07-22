@@ -318,7 +318,7 @@ function add_commands () {
         mac: 'Command-S',
         sender: 'editor'
       },
-      exec: function(env, args, request) { $('#s_search').focus(); }
+      exec: function(env, args, request) { $('#s_search').focus().select(); }
   });
 }
 

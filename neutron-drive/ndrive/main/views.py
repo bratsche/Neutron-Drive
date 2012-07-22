@@ -52,12 +52,13 @@ class DriveAuth (object):
       
     flow.redirect_uri = uri + self.request.path
     return flow
-
-  def get_credentials (self):
-    creds = self.get_session_credentials()
-    if creds:
-      return creds
-      
+    
+  def get_credentials (self, check_cookie=True):
+    if check_cookie:
+      creds = self.get_session_credentials()
+      if creds:
+        return creds
+        
     code = self.request.REQUEST.get('code', '')
     if not code:
       return None
@@ -113,28 +114,28 @@ def edit_old (request):
   
 def edit (request):
   da = DriveAuth(request)
-  creds = da.get_credentials()
+  creds = da.get_credentials(check_cookie=False)
   
   if creds is None:
     return da.redirect_auth()
     
-  code = request.REQUEST.get('code', '')
-  if code:
-    response = http.HttpResponseRedirect(reverse('edit'))
-    
-  else:
-    c = {
-      'MODES': MODES,
-      'NDEBUG': settings.DEBUG,
-      'CLIENT_ID': settings.GOOGLE_API_CLIENT_ID.split('.')[0],
-      'prefs': da.prefs,
-      'themes': ETHEMES,
-      'sizes': ESIZES,
-      'binds': EKBINDS,
-      'wraps': EWRAPS,
-    }
-    response = TemplateResponse(request, 'main/edit.html', c)
-    
+  #code = request.REQUEST.get('code', '')
+  #if code:
+  #  response = http.HttpResponseRedirect(reverse('edit'))
+  #  
+  #else:
+  c = {
+    'MODES': MODES,
+    'NDEBUG': settings.DEBUG,
+    'CLIENT_ID': settings.GOOGLE_API_CLIENT_ID.split('.')[0],
+    'prefs': da.prefs,
+    'themes': ETHEMES,
+    'sizes': ESIZES,
+    'binds': EKBINDS,
+    'wraps': EWRAPS,
+  }
+  response = TemplateResponse(request, 'main/edit.html', c)
+  
   expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=settings.MAX_AGE)
   response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT)
   return response

@@ -194,3 +194,20 @@ nav .btn-toolbar {
 #search_results table.table td {
   padding: 5px;
 }
+
+#search_results .file_results h2 {
+  font-size: 13px;
+  padding: 8px 5px;
+  margin: 0;
+  line-height: 13px;
+}
+
+#search_results .file_results .table {
+  margin-bottom: 0;
+}
+
+#search_results .file_results {
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 10px;
+}
+
