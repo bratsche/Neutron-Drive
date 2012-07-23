@@ -10,9 +10,9 @@ Tabs.add_file = function (file_id, name, mime, session) {
     mime: mime,
     session: session,
     md5hash: md5(session.getValue()),
-    undos: 0
+    undos: 0,
+    saved_once: false
   };
-  //getUndoManager().$undoStack.length
   
   $("#tab_bar span.current").removeClass('current');
   var html = '<span class="current" id="' + file_id + '">';

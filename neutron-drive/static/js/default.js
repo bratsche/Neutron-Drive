@@ -78,7 +78,7 @@ function auto_save () {
       $('#message_center').append('<span class="message_' + file_id +'">Saving ' + name + ' ... </span>');
       var undos = Tabs.data[file_id].session.getUndoManager().$undoStack.length;
       
-      if (Math.abs(undos - Tabs.data[file_id].undos) > 5) {
+      if (!Tabs.data[file_id].saved_once || Math.abs(undos - Tabs.data[file_id].undos) > 10) {
         major = 'true';
       }
       
@@ -104,6 +104,7 @@ function auto_save () {
           if (response_ok(data)) {
             Tabs.data[data.file_id].undos = data.undos;
             Tabs.data[data.file_id].md5hash = data.md5hash;
+            Tabs.data[data.file_id].saved_once = true;
           }
         },
         error: function () { alert('Error saving file ' + name); },
