@@ -61,11 +61,15 @@ function getParameterByName (qs, name) {
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function auto_save () {
+function auto_save (forced) {
   var name;
   var content;
   var md5hash;
   var major;
+  
+  if (forced) {
+    clearTimeout(saveLoop);
+  }
   
   for (i in Tabs.files) {
     var file_id = Tabs.files[i];
@@ -74,11 +78,11 @@ function auto_save () {
     md5hash = md5(content);
     major = 'false';
     
-    if (md5hash != Tabs.data[file_id].md5hash) {
+    if (forced || md5hash != Tabs.data[file_id].md5hash) {
       $('#message_center').append('<span class="message_' + file_id +'">Saving ' + name + ' ... </span>');
       var undos = Tabs.data[file_id].session.getUndoManager().$undoStack.length;
       
-      if (!Tabs.data[file_id].saved_once || Math.abs(undos - Tabs.data[file_id].undos) > 10) {
+      if (forced || !Tabs.data[file_id].saved_once || Math.abs(undos - Tabs.data[file_id].undos) > 10) {
         major = 'true';
       }
       
@@ -116,9 +120,14 @@ function auto_save () {
     }
   }
   
-  setTimeout(function() { auto_save(); }, 5000);
+  saveLoop = setTimeout(function() { auto_save(); }, 5000);
+  
+  if (forced) {
+    Editor.focus();
+  }
 }
 
+var saveLoop;
 var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
@@ -157,7 +166,7 @@ $(document).ready(function () {
   
   add_commands();
   
-  setTimeout(function() { auto_save(); }, 3000);
+  saveLoop = setTimeout(function() { auto_save(); }, 3000);
 });
 
 function response_ok (data) {
