@@ -38,8 +38,8 @@ function pickerCallback (data) {
   }
 }
 
-function clear_message () {
-  $('#message_center').html('');
+function clear_message (fid) {
+  $('#message_center .message_' + fid).remove();
 }
 
 function close_all () {
@@ -50,35 +50,72 @@ function close_all () {
   }
 }
 
-function save_current () {
-  var content = Editor.getSession().getValue();
+function getParameterByName (qs, name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(qs);
+  if(results == null)
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function auto_save () {
   var name;
-  var mimetype;
+  var content;
+  var md5hash;
+  var major;
   
-  //todo: get current tab
-  for (file_id in Tabs.files) {
+  for (i in Tabs.files) {
+    var file_id = Tabs.files[i];
     name = Tabs.data[file_id].name;
-    mimetype = Tabs.data[file_id].mime;
+    content = Tabs.data[file_id].session.getValue();
+    md5hash = md5(content);
+    major = 'false';
+    
+    if (md5hash != Tabs.data[file_id].md5hash) {
+      $('#message_center').append('<span class="message_' + file_id +'">Saving ' + name + ' ... </span>');
+      var undos = Tabs.data[file_id].session.getUndoManager().$undoStack.length;
+      
+      if (Math.abs(undos - Tabs.data[file_id].undos) > 5) {
+        major = 'true';
+      }
+      
+      else {
+        undos = Tabs.data[file_id].undos;
+      }
+      
+      $.ajax({
+        type: 'POST',
+        url: ndrive.negotiator,
+        data: {
+          file_id: file_id,
+          task: 'save',
+          content: content,
+          new_file: 'false',
+          name: name,
+          mimetype: Tabs.data[file_id].mime,
+          major: major,
+          md5hash: md5hash,
+          undos: undos
+        },
+        success: function (data) {
+          if (response_ok(data)) {
+            Tabs.data[data.file_id].undos = data.undos;
+            Tabs.data[data.file_id].md5hash = data.md5hash;
+          }
+        },
+        error: function () { alert('Error saving file ' + name); },
+        complete: function () {
+          var fid = getParameterByName('?' + this.data, 'file_id')
+          clear_message(fid);
+        }
+      });
+    }
   }
-  //
   
-  $('#message_center').html('Saving ' + name + ' ... ');
-  
-  $.ajax({
-    type: 'POST',
-    url: ndrive.negotiator,
-    data: {
-      file_id: file_id,
-      task: 'save',
-      content: content,
-      new_file: 'false',
-      name: name,
-      mimetype: mimetype
-    },
-    success: response_ok,
-    error: function () { alert('Error saving file ' + name); },
-    complete: clear_message
-  });
+  setTimeout(function() { auto_save(); }, 5000);
 }
 
 var EditSession = require('ace/edit_session').EditSession;
@@ -118,6 +155,8 @@ $(document).ready(function () {
   }, false);
   
   add_commands();
+  
+  setTimeout(function() { auto_save(); }, 3000);
 });
 
 function response_ok (data) {

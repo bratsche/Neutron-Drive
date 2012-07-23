@@ -5,7 +5,14 @@ var Tabs = {
 
 Tabs.add_file = function (file_id, name, mime, session) {
   Tabs.files.push(file_id);
-  Tabs.data[file_id] = {name: name, mime: mime, session: session};
+  Tabs.data[file_id] = {
+    name: name,
+    mime: mime,
+    session: session,
+    md5hash: md5(session.getValue()),
+    undos: 0
+  };
+  //getUndoManager().$undoStack.length
   
   $("#tab_bar span.current").removeClass('current');
   var html = '<span class="current" id="' + file_id + '">';

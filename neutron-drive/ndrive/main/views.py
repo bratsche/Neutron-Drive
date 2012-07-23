@@ -166,6 +166,8 @@ def prefs (request):
     return JsonResponse()
     
 def shatner (request):
+  logging.info(request.POST)
+  
   da = DriveAuth(request)
   creds = da.get_session_credentials()
   if creds is None:
@@ -205,7 +207,14 @@ def shatner (request):
       content = request.POST.get('content')
       file_id = request.POST.get('file_id', '')
       new_file = request.POST.get('new_file')
+      major = request.POST.get('major', '')
+      md5hash = request.POST.get('md5hash', '')
+      undos = int(request.POST.get('undos', '0'))
       
+      new_revision = False
+      if major == 'true':
+        new_revision = True
+        
       resource = {
         'title': name,
         'mimeType': mimetype
@@ -215,7 +224,7 @@ def shatner (request):
       
       try:
         if new_file == 'false':
-          google = service.files().update(id=file_id, newRevision=True, body=resource, media_body=file).execute()
+          google = service.files().update(id=file_id, newRevision=new_revision, body=resource, media_body=file).execute()
           
         else:
           google = service.files().insert(body=resource, media_body=file).execute()
@@ -226,7 +235,7 @@ def shatner (request):
       else:
         file_id = google['id']
         
-      return JsonResponse(ok={'file_id': file_id})
+      return JsonResponse(ok={'file_id': file_id, 'md5hash': md5hash, 'undos': undos})
       
   return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
   
