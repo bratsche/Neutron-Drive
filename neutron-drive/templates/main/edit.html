@@ -80,6 +80,7 @@
       ndrive.CLIENT_ID = {{ CLIENT_ID }};
       ndrive.negotiator = '{% url "shatner" %}';
       ndrive.prefs = '{% url "prefs" %}';
+      ndrive.initial_ids = [{% for id in open_ids %}'{{ id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
       
       var STATIC_URL = '{{ request.static_url }}';
       var LOADED_THEMES = ['{{ prefs.theme }}'];

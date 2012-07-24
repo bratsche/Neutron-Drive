@@ -124,6 +124,13 @@ def edit (request):
   #  response = http.HttpResponseRedirect(reverse('edit'))
   #  
   #else:
+  
+  state = request.REQUEST.get('state', '')
+  open_ids = []
+  if state:
+    state = json.loads(state)
+    open_ids = state["ids"]
+    
   c = {
     'MODES': MODES,
     'NDEBUG': settings.DEBUG,
@@ -133,6 +140,7 @@ def edit (request):
     'sizes': ESIZES,
     'binds': EKBINDS,
     'wraps': EWRAPS,
+    'open_ids': open_ids
   }
   response = TemplateResponse(request, 'main/edit.html', c)
   
@@ -143,6 +151,7 @@ def edit (request):
 def prefs (request):
   da = DriveAuth(request)
   creds = da.get_session_credentials()
+  
   if creds is not None:
     da.prefs.theme = request.POST.get('theme')
     da.prefs.fontsize = request.POST.get('fontsize')

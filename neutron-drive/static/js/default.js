@@ -166,6 +166,17 @@ $(document).ready(function () {
   
   add_commands();
   
+  for (i in ndrive.initial_ids) {
+    var file_id = ndrive.initial_ids[i];
+    $.ajax({
+      type: 'POST',
+      url: ndrive.negotiator,
+      data: {'file_id': file_id, 'task': 'open'},
+      success: add_tab,
+      error: function () { alert('Error opening file'); }
+    });
+  }
+  
   saveLoop = setTimeout(function() { auto_save(); }, 3000);
 });
 
