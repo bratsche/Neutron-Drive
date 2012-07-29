@@ -24,7 +24,9 @@ def verify (request):
   return TemplateResponse(request, 'google442b861f8353f428.html', {})
   
 def home (request):
-  c = {}
+  c = {
+    'NDEBUG': settings.NDEBUG
+  }
   return TemplateResponse(request, 'main/home.html', c)
   
 def about (request):
@@ -135,14 +137,14 @@ def edit (request):
     
   c = {
     'MODES': MODES,
-    'NDEBUG': settings.DEBUG,
+    'NDEBUG': settings.NDEBUG,
     'CLIENT_ID': settings.GOOGLE_API_CLIENT_ID.split('.')[0],
     'prefs': da.prefs,
     'themes': ETHEMES,
     'sizes': ESIZES,
     'binds': EKBINDS,
     'wraps': EWRAPS,
-    'open_ids': open_ids
+    'open_ids': open_ids,
   }
   response = TemplateResponse(request, 'main/edit.html', c)
   
