@@ -7,6 +7,7 @@ urlpatterns = patterns('',
   url(r'^edit/shatner$', 'ndrive.main.views.shatner', name='shatner'),
   url(r'^edit$', 'ndrive.main.views.edit', name='edit'),
   url(r'^edit_old$', 'ndrive.main.views.edit_old', name='edit_old'),
+  url(r'^file_tree$', 'ndrive.main.views.file_tree', name='file_tree'),
   url(r'^prefs$', 'ndrive.main.views.prefs', name='prefs'),
   
   url(r'^about$', 'ndrive.main.views.about', name='about'),

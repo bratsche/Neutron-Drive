@@ -3,6 +3,7 @@
   <head>
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"></link>
     <link rel="stylesheet" href="{% static "css/edit.css" %}">
+    <link rel="stylesheet" href="{% static "js/jqueryFileTree/jqueryFileTree.css" %}">
     <title>Neutron Drive</title>
   </head>
   <body>
@@ -29,6 +30,12 @@
                     Preferences
                   </a>
                 </li>
+                <li>
+                  <a href="javascript: void(0);" onclick="$('#fileTree').fileTree({root: '', script: '/file_tree'}, file_browser_open);">
+                    <i class="icon-refresh"></i>
+                    Refresh File Browser
+                  </a>
+                </li>
                 <li class="divider"></li>
                 <li>
                   <a data-toggle="modal" href="#modeModal">
@@ -51,7 +58,18 @@
       </div>
       <div id="box_wrapper">
         <div>
-          {% include "main/search.html" %}
+          <ul class="nav nav-tabs" id="sideTabs">
+            <li><a href="#fileSideTab" data-toggle="tab">Files</a></li>
+            <li><a href="#searchSideTab" data-toggle="tab">Search</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="fileSideTab">
+              <div id="fileTree"></div>
+            </div>
+            <div class="tab-pane" id="searchSideTab">
+              {% include "main/search.html" %}
+            </div>
+          </div>
         </div>
         <div class="back vert_sep">
           <div>
@@ -106,6 +124,7 @@
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
     <script src="{% static "bootstrap/js/bootstrap.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/jqueryFileTree/jqueryFileTree.js" %}" type="text/javascript"></script>
     <script src="{% static "js/md5.js" %}" type="text/javascript"></script>
     <script src="{% static "js/boring_stuff.js" %}" type="text/javascript"></script>
     <script src="{% static "js/tabs.js" %}" type="text/javascript"></script>

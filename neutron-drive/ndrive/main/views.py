@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 import datetime
@@ -6,6 +7,7 @@ from django import http
 from django.conf import settings
 from django.template.response import TemplateResponse
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.client import FlowExchangeError
@@ -175,8 +177,6 @@ def prefs (request):
     return JsonResponse()
     
 def shatner (request):
-  logging.info(request.POST)
-  
   da = DriveAuth(request)
   creds = da.get_session_credentials()
   if creds is None:
@@ -184,7 +184,7 @@ def shatner (request):
     
   task = request.POST.get('task', '')
   if task in ('open', 'new', 'save'):
-    service = CreateService('drive', 'v1', creds)
+    service = CreateService('drive', 'v2', creds)
     
     if service is None:
       return JsonResponse({'status': 'no_service'})
@@ -193,7 +193,7 @@ def shatner (request):
       file_id = request.POST.get('file_id', '')
       if file_id:
         try:
-          f = service.files().get(id=file_id).execute()
+          f = service.files().get(fileId=file_id).execute()
           
         except AccessTokenRefreshError:
           return JsonResponse({'status': 'auth_needed'})
@@ -233,7 +233,7 @@ def shatner (request):
       
       try:
         if new_file == 'false':
-          google = service.files().update(id=file_id, newRevision=new_revision, body=resource, media_body=file).execute()
+          google = service.files().update(fileId=file_id, newRevision=new_revision, body=resource, media_body=file).execute()
           
         else:
           google = service.files().insert(body=resource, media_body=file).execute()
@@ -247,4 +247,67 @@ def shatner (request):
       return JsonResponse(ok={'file_id': file_id, 'md5hash': md5hash, 'undos': undos})
       
   return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
+  
+def file_tree (request):
+  da = DriveAuth(request)
+  creds = da.get_session_credentials()
+  if creds is None:
+    return http.HttpResponseForbidden('Not Authorized', mimetype='text/plain')
+    
+  service = CreateService('drive', 'v2', creds)
+  d = request.POST.get('dir', '')
+  dirs = [] 
+  flist = []
+  page_token = None
+  
+  logging.info(d)
+  while 1:
+    param = {}  
+    if page_token:
+      param['pageToken'] = page_token
+      
+    if d:
+      param['q'] = "'%s' in parents" % d[:-1]
+      
+    files = service.files().list(**param).execute()
+      
+    for f in files.get('items', []):
+      f['ext'] = ''
+      if f.has_key('fileExtension'):
+        f['ext'] = f['fileExtension']
+        
+      isDir = False
+      if f['ext'] == '' and f.has_key('mimeType') and f['mimeType'] == 'application/vnd.google-apps.folder':
+        isDir = True
+        
+      add = False
+      if d:
+        add = True
+          
+      else:
+        if isDir and f['parents'] and f['parents'][0]['isRoot']:
+          add = True
+          
+        if not f['parents']:
+          add = True
+        
+      if add:
+        if isDir:
+          dirs.append((f['title'], '<li class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['title'], f['id'], f['title'])))
+          
+        else:
+          flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s">%(title)s</a></li>' % f))
+          
+    page_token = files.get('nextPageToken')
+    if not page_token:
+      break
+    
+  flist = sorted(flist, key=lambda x: x[0].lower())
+  dirs = sorted(dirs, key=lambda x: x[0].lower())
+  
+  dirs = [y for (x, y) in dirs if True]
+  flist = [y for (x, y) in flist if True]
+  
+  r = ['<ul class="jqueryFileTree" style="display: none;">'] + dirs + flist + ['</ul>']
+  return http.HttpResponse(''.join(r))
   

@@ -42,7 +42,7 @@ var FILE_EXTS = {
   
   'cfm': 'coldfusion', 'cfc': 'coldfusion', 'cfml': 'coldfusion',
   
-  'cof': 'coffee',
+  'cof': 'coffee', 'coffee': 'coffee',
   
   'cs': 'csharp',
   
@@ -98,7 +98,7 @@ var FILE_EXTS = {
   
   'xml': 'xml', 'rss': 'xml', 'atom': 'xml',
   
-  'xquery': 'xquery',
+  'xquery': 'xquery', 'xq': 'xquery',
   
   'yml': 'yaml', 'yaml': 'yaml',
   
@@ -112,3 +112,30 @@ var FILE_EXTS = {
   
   'textile': 'textile'
 };
+
+var MIMES = [
+  'text/css',
+  'text/x-diff',
+  'application/javascript',
+  'application/x-latex',
+  'text/x-tex',
+  'image/svg+xml',
+  'text/x-perl',
+  'application/java-vm',
+  'application/x-sql',
+  'application/x-httpd-php',
+  'text/x-sh',
+  'application/xml',
+  'application/x-ruby',
+  'application/rss+xml',
+  'application/atom+xml',
+  'text/x-scala',
+  'text/plain',
+  'text/x-c++src',
+  'application/json',
+  'text/html',
+  'text/x-csrc',
+  'text/x-python',
+  'text/x-java'
+];
+
