@@ -187,10 +187,6 @@ function file_browser_open (file_id) {
   var exts = Object.keys(FILE_EXTS);
   
   if (MIMES.indexOf(d.mime) >= 0 || (d.ext != '' && exts.indexOf(d.ext) >= 0)) {
-    console.log(MIMES.indexOf(d.mime));
-    console.log(d.ext);
-    console.log(exts.indexOf(d.ext));
-    
     if (Tabs.files.indexOf(file_id) < 0) {
       $.ajax({
         type: 'POST',
