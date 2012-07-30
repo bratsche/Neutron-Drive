@@ -17,7 +17,7 @@ from oauth2client.appengine import StorageByKeyName
 from oauth2client.appengine import simplejson as json
 
 from ndrive.main.models import Credentials, Preferences, ETHEMES, ESIZES, EKBINDS, EWRAPS
-from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create
+from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create, MediaUpload
 from ndrive.settings.editor import MODES, THEMES
 
 def verify (request):
@@ -131,10 +131,16 @@ def edit (request):
   
   state = request.REQUEST.get('state', '')
   open_ids = []
+  new_in = None
+  
   if state:
     state = json.loads(state)
-    open_ids = state["ids"]
-    
+    if state["action"] == 'open':
+      open_ids = state["ids"]
+      
+    elif state["action"] == 'create':
+      new_in = state['parentId']
+      
   c = {
     'MODES': MODES,
     'NDEBUG': settings.NDEBUG,
@@ -145,6 +151,7 @@ def edit (request):
     'binds': EKBINDS,
     'wraps': EWRAPS,
     'open_ids': open_ids,
+    'new_in': new_in,
   }
   response = TemplateResponse(request, 'main/edit.html', c)
   
@@ -248,6 +255,28 @@ def shatner (request):
         
       return JsonResponse(ok={'file_id': file_id, 'md5hash': md5hash, 'undos': undos})
       
+    elif task == 'new':
+      name = request.POST.get('name')
+      parent = request.POST.get('parent', '')
+      
+      media_body = MediaFileUpload(name, mimetype=mime_type, resumable=True)
+      body = {
+        'title': title,
+        'mimeType': mime_type
+      }
+      
+      if parent:
+        body['parents'] = [{'id': parent}]
+        
+      try:
+        google = service.files().insert(body=body, media_body=media_body).execute()
+        
+      except AccessTokenRefreshError:
+        return JsonResponse({'status': 'auth_needed'})
+        
+      else:
+        return JsonResponse(ok={'file_id': google['id']})
+        
   return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
   
 def file_tree (request):
@@ -271,6 +300,9 @@ def file_tree (request):
     if d:
       param['q'] = "'%s' in parents" % d[:-1]
       
+    else:
+      param['q'] = "'root' in parents"
+      
     files = service.files().list(**param).execute()
       
     for f in files.get('items', []):
@@ -282,24 +314,12 @@ def file_tree (request):
       if f['ext'] == '' and f.has_key('mimeType') and f['mimeType'] == 'application/vnd.google-apps.folder':
         isDir = True
         
-      add = False
-      if d:
-        add = True
-          
-      else:
-        if isDir and f['parents'] and f['parents'][0]['isRoot']:
-          add = True
-          
-        if not f['parents']:
-          add = True
+      if isDir:
+        dirs.append((f['title'], '<li class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['title'], f['id'], f['title'])))
         
-      if add:
-        if isDir:
-          dirs.append((f['title'], '<li class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['title'], f['id'], f['title'])))
-          
-        else:
-          flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s">%(title)s</a></li>' % f))
-          
+      else:
+        flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s">%(title)s</a></li>' % f))
+        
     page_token = files.get('nextPageToken')
     if not page_token:
       break
