@@ -96,26 +96,58 @@ nav .btn-toolbar {
 }
 
 #tab_bar {
-  height: 31px;
+  height: 29px;
   overflow: hidden;
+  position: relative;
+  
+  background-image: url(/static/img/line.png);
+  background-repeat: repeat-x;
+  background-position-y: 25px;
 }
 
 #tab_bar span {
+  border: 1px solid #9c9c9c;
+  
   display: inline-block;
-  border: 1px solid #333;
-  border-radius: 5px;
-  display: inline-block;
-  padding: 5px;
+  padding: 3px 8px;
   margin: 0 5px;
+  border-top-right-radius: 30px 60px;
+  border-top-left-radius: 30px 60px;
+  
+  position: absolute;
+  z-index: 3;
+  font-size: 90%;
+  width: 120px;
+  overflow: hidden;
+  background-color: #d8d8d8;
+}
+
+#tab_bar span:first-child {
+  margin-left: 0;
 }
 
 #tab_bar span.current {
-  background-color: #050;
+  border-bottom: 1px solid #e8e8e8;
+  background-color: #E8E8E8;
+  z-index: 5;
+}
+
+#tab_bar span a {
+  color: #333;
+  width: 102px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  display: inline-block;
+}
+
+#tab_bar span button {
+  display: inline-block;
+  margin: 0 0 0 3px;
 }
 
 #tab_bar span.current a {
-  font-weight: bold;
-  color: #CCC;
+  
 }
 
 #box_wrapper {
