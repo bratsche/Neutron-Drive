@@ -180,10 +180,57 @@ $(document).ready(function () {
   $('#sideTabs a:first').tab('show');
   
   $('#fileTree').fileTree({root: '', script: '/file_tree'}, file_browser_open);
+  
+  if (ndrive.new_in) {
+    $("#id_newfile_parent").val(ndrive.new_in);
+    $('#newModal').modal('show');
+  }
 });
 
-function file_browser_open (file_id) {
-  var d = $('a[rel="' + file_id + '"]').data();
+function new_file_root () {
+  $("#id_newfile_parent").val('');
+  $('#newModal').modal('show');
+}
+
+function new_file () {
+  var name = $("#id_newfile_name").val();
+  var parent = $("#id_newfile_parent").val();
+  $('#newModal').modal('hide');
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.negotiator,
+    data: {
+      task: 'new',
+      parent: parent,
+      name: name
+    },
+    success: function (data) {
+      if (response_ok(data)) {
+        file_browser_open(data['file_id'], data);
+        if (parent) {
+          var sel = '#dir_' + parent;
+          if ($(sel).hasClass('expanded')) {
+            $(sel + ' a').click();
+          }
+          
+          $(sel + ' a').click();
+        }
+        
+        else {
+          $('#fileTree').fileTree({root: '', script: '/file_tree'}, file_browser_open);
+        }
+      }
+    },
+    error: function () { alert('Error creating new file.'); }
+  });
+}
+
+function file_browser_open (file_id, d) {
+  if (!d) {
+    d = $('a[rel="' + file_id + '"]').data();
+  }
+  
   var exts = Object.keys(FILE_EXTS);
   
   if (MIMES.indexOf(d.mime) >= 0 || (d.ext != '' && exts.indexOf(d.ext) >= 0)) {

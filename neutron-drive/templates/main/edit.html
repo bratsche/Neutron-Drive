@@ -53,6 +53,12 @@
                     Refresh File Browser
                   </a>
                 </li>
+                <li>
+                  <a href="javascript: void(0);" onclick="new_file_root()">
+                    <i class="icon-file"></i>
+                    New File
+                  </a>
+                </li>
                 <li class="divider"></li>
                 <li>
                   <a data-toggle="modal" href="#modeModal">
@@ -123,6 +129,7 @@
       ndrive.negotiator = '{% url "shatner" %}';
       ndrive.prefs = '{% url "prefs" %}';
       ndrive.initial_ids = [{% for id in open_ids %}'{{ id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+      ndrive.new_in = {% if new_in %}'{{ new_in }}'{% else %}false{% endif %};
       
       var STATIC_URL = '{{ request.static_url }}';
       var LOADED_THEMES = ['{{ prefs.theme }}'];

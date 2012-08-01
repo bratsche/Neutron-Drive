@@ -51,6 +51,25 @@
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
   </div>
 </div>
+<div class="modal fade hide" id="newModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>New File</h3>
+  </div>
+  <div class="modal-body">
+    <div class="control-group">
+      <label class="control-label" for="id_newfile_name">New File Name</label>
+      <div class="controls">
+        <input type="hidden" name="newfile_parent" id="id_newfile_parent" value="">
+        <input type="text" name="newfile_name" id="id_newfile_name" value="">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript: void(0);" class="btn btn-primary" onclick="new_file()">Create</a>
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+  </div>
+</div>
 <div class="modal fade hide" id="prefModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>

@@ -2,6 +2,8 @@ import os
 import json
 import logging
 import datetime
+import mimetypes
+mimetypes.init()
 
 from django import http
 from django.conf import settings
@@ -16,8 +18,10 @@ from oauth2client.client import AccessTokenRefreshError
 from oauth2client.appengine import StorageByKeyName
 from oauth2client.appengine import simplejson as json
 
+from apiclient.http import MediaFileUpload
+
 from ndrive.main.models import Credentials, Preferences, ETHEMES, ESIZES, EKBINDS, EWRAPS
-from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create, MediaUpload
+from ndrive.main.utils import JsonResponse, MediaInMemoryUpload, CreateService, ALL_SCOPES, get_or_create
 from ndrive.settings.editor import MODES, THEMES
 
 def verify (request):
@@ -259,9 +263,17 @@ def shatner (request):
       name = request.POST.get('name')
       parent = request.POST.get('parent', '')
       
-      media_body = MediaFileUpload(name, mimetype=mime_type, resumable=True)
+      mime_type, enc = mimetypes.guess_type(name)
+      root, ext = os.path.splitext(name)
+      if not mime_type:
+        mime_type = 'application/octet-stream'
+        
+      if ext:
+        ext = ext[1:]
+        
+      media_body = MediaInMemoryUpload('', mime_type)
       body = {
-        'title': title,
+        'title': name,
         'mimeType': mime_type
       }
       
@@ -275,7 +287,7 @@ def shatner (request):
         return JsonResponse({'status': 'auth_needed'})
         
       else:
-        return JsonResponse(ok={'file_id': google['id']})
+        return JsonResponse(ok={'file_id': google['id'], 'title': name, 'ext': ext, 'mime': mime_type, 'url': google['alternateLink'], 'parent': parent})
         
   return http.HttpResponseBadRequest('Invalid Task', mimetype='text/plain')
   
@@ -315,7 +327,7 @@ def file_tree (request):
         isDir = True
         
       if isDir:
-        dirs.append((f['title'], '<li class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['title'], f['id'], f['title'])))
+        dirs.append((f['title'], '<li id="dir_%s" class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['id'], f['title'], f['id'], f['title'])))
         
       else:
         flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s">%(title)s</a></li>' % f))
