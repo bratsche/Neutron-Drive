@@ -196,13 +196,27 @@ def shatner (request):
     return JsonResponse({'status': 'auth_needed'})
     
   task = request.POST.get('task', '')
-  if task in ('open', 'new', 'save'):
+  if task in ('open', 'new', 'save', 'rename', 'delete'):
     service = CreateService('drive', 'v2', creds)
     
     if service is None:
       return JsonResponse({'status': 'no_service'})
       
-    if task == 'open':
+    if task == 'delete':
+      file_id = request.POST.get('file_id', '')
+      fid = file_id
+      if file_id.endswith('/'):
+        fid = file_id[:-1]
+        
+      try:
+        service.files().delete(fileId=fid).execute()
+        
+      except AccessTokenRefreshError:
+        return JsonResponse({'status': 'auth_needed'})
+        
+      return JsonResponse({'status': 'ok', 'file_id': file_id})
+      
+    elif task == 'open':
       file_id = request.POST.get('file_id', '')
       if file_id:
         try:
@@ -258,6 +272,34 @@ def shatner (request):
         file_id = google['id']
         
       return JsonResponse(ok={'file_id': file_id, 'md5hash': md5hash, 'undos': undos})
+      
+    elif task == 'rename':
+      name = request.POST.get('name')
+      mimetype = request.POST.get('mimetype')
+      file_id = request.POST.get('file_id', '')
+      
+      newm, enc = mimetypes.guess_type(name)
+      if newm:
+        mimetype = newm
+        
+      resource = {
+        'title': name,
+        'mimeType': mimetype
+      }
+      google = service.files().update(fileId=file_id, newRevision=True, body=resource).execute()
+      
+      parents = []
+      for p in google['parents']:
+        if p['isRoot']:
+          parents.append('')
+          
+        else:
+          parents.append(p['id'])
+          
+      if not parents:
+        parents.append('')
+        
+      return JsonResponse(ok={'file_id': file_id, 'parents': parents})
       
     elif task == 'new':
       name = request.POST.get('name')
@@ -327,10 +369,10 @@ def file_tree (request):
         isDir = True
         
       if isDir:
-        dirs.append((f['title'], '<li id="dir_%s" class="directory collapsed" title="%s"><a href="#" rel="%s/">%s</a></li>' % (f['id'], f['title'], f['id'], f['title'])))
+        dirs.append((f['title'], '<li id="dir_%(id)s" class="directory collapsed" title="%(title)s"><a href="#" rel="%(id)s/" data-mime="%(mimeType)s" data-title="%(title)s" onclick="hide_right_menu()" oncontextmenu="return right_menu(event, \'dir\', \'%(id)s/\')">%(title)s</a></li>' % f))
         
       else:
-        flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s">%(title)s</a></li>' % f))
+        flist.append((f['title'], '<li class="file ext_%(ext)s"><a href="#" rel="%(id)s" data-title="%(title)s" data-url="%(alternateLink)s" data-mime="%(mimeType)s" data-ext="%(ext)s" onclick="hide_right_menu()" oncontextmenu="return right_menu(event, \'file\', \'%(id)s\')">%(title)s</a></li>' % f))
         
     page_token = files.get('nextPageToken')
     if not page_token:

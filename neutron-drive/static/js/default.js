@@ -185,11 +185,21 @@ $(document).ready(function () {
     $("#id_newfile_parent").val(ndrive.new_in);
     $('#newModal').modal('show');
   }
+  
+  $('body').click(hide_right_menu);
 });
 
 function new_file_root () {
   $("#id_newfile_parent").val('');
   $('#newModal').modal('show');
+  
+  setTimeout(function(){ $("#id_newfile_name").focus().select(); }, 500);
+}
+
+function new_file_dir (fid) {
+  $("#id_newfile_parent").val(fid);
+  
+  setTimeout(function(){ $("#id_newfile_name").focus().select(); }, 500);
 }
 
 function new_file () {
@@ -208,22 +218,28 @@ function new_file () {
     success: function (data) {
       if (response_ok(data)) {
         file_browser_open(data['file_id'], data);
-        if (parent) {
-          var sel = '#dir_' + parent;
-          if ($(sel).hasClass('expanded')) {
-            $(sel + ' a').click();
-          }
-          
-          $(sel + ' a').click();
-        }
-        
-        else {
-          $('#fileTree').fileTree({root: '', script: '/file_tree'}, file_browser_open);
-        }
+        refresh_parent(parent);
       }
     },
     error: function () { alert('Error creating new file.'); }
   });
+  
+  return false;
+}
+
+function refresh_parent (parent) {
+  if (parent) {
+    var sel = '#dir_' + parent;
+    if ($(sel).hasClass('expanded')) {
+      $(sel + ' > a').click();
+    }
+    
+    $(sel + ' > a').click();
+  }
+  
+  else {
+    $('#fileTree').fileTree({root: '', script: '/file_tree'}, file_browser_open);
+  }
 }
 
 function file_browser_open (file_id, d) {
@@ -252,7 +268,7 @@ function file_browser_open (file_id, d) {
   else {
     $("#hiddenLink").attr('href', d.url);
     $("#hiddenLink").html('Open ' + d.title);
-    $('#linkModal').modal('toggle');
+    $('#linkModal').modal('show');
   }
 }
 
@@ -465,3 +481,83 @@ function add_commands () {
   });
 }
 
+function hide_right_menu () {
+  $(".fb-right-menu").remove();
+}
+
+function right_menu (event, ftype, fid) {
+  $(".fb-right-menu").remove();
+  
+  var y = event.y - 10;
+  var x = event.x - 10;
+  
+  var d = $('a[rel="' + fid + '"]').data();
+  
+  var html = '<ul class="fb-right-menu dropdown-menu" style="display: block; position: absolute; top: ' + y + 'px; left: ' + x + 'px">';
+  html = html + '<li style="padding: 3px 15px; width: 160px;">' + d['title'] + '</li>';
+  html = html + '<li class="divider"></li>';
+  
+  html = html + '<li><a data-toggle="modal" href="#renameModal" onclick="set_rename_file(\'' + fid + '\', \'' + escape(d['title']) + '\', \'' + d['mime'] + '\')"><i class="icon-pencil"></i> Rename</a></li>';
+  
+  if (ftype == 'file') {
+    html = html + '<li><a href="' + d['url'] + '" target="_blank"><i class="icon-circle-arrow-up"></i> Open in Google</a></li>';
+  }
+  
+  else {
+    html = html + '<li><a data-toggle="modal" href="#newModal" onclick="new_file_dir(\'' + fid.slice(0, -1) + '\')"><i class="icon-file"></i> New File</a></li>';
+    html = html + '<li><a data-toggle="modal" href="javascript: void(0);" onclick="refresh_parent(\'' + fid.slice(0, -1) + '\');"><i class="icon-refresh"></i> Refresh</a></li>';
+  }
+  
+  html = html + '<li><a data-toggle="modal" href="javascript: void(0);" onclick="delete_file(\'' + fid + '\', \'' + escape(d['title']) + '\')"><i class="icon-trash"></i> Delete</a></li>';
+  html = html + '</ul>';
+  $('body').append(html);
+  return false;
+}
+
+function set_rename_file (fid, title, mime) {
+  title = unescape(title);
+  $("#id_rename_id").val(fid);
+  $("#id_rename_name").val(title);
+  $("#renameSpan").html(title);
+  $("#id_rename_mime").val(mime);
+  
+  setTimeout(function(){ $("#id_rename_name").focus().select(); }, 500);
+}
+
+function rename_file () {
+  $('#renameModal').modal('hide');
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.negotiator,
+    data: {file_id: $("#id_rename_id").val(), task: 'rename', name: $("#id_rename_name").val(), mimetype: $("#id_rename_mime").val()},
+    success: function (data) {
+      if (response_ok(data)) {
+        for (i in data.parents) {
+          refresh_parent(data.parents[i]);
+        }
+      }
+    },
+    error: function () { alert('Error renaming file.'); }
+  });
+  
+  return false;
+}
+
+function delete_file (fid, title) {
+  title = unescape(title);
+  
+  if (confirm('Are you sure you wish to delete ' + title + '?')) {
+    $.ajax({
+      type: 'POST',
+      url: ndrive.negotiator,
+      data: {file_id: fid, task: 'delete'},
+      success: function (data) {
+        if (response_ok(data)) {
+          $('a[rel="' + data.file_id + '"]').parent().remove();
+        }
+      },
+      error: function () { alert('Error deleting ' + title + '.'); }
+    });
+  }
+}
