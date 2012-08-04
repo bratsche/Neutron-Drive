@@ -42,6 +42,10 @@ Tabs.switch_tab = function (file_id, noscroll) {
   }
 };
 
+Tabs.current_tab = function () {
+  return $("#tab_bar span.current").get(0).id;
+}
+
 Tabs.remove_tab = function (file_id) {
   var f = Tabs.files.indexOf(file_id);
   var sel = "#tab_bar span#" + file_id;

@@ -51,6 +51,34 @@
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
   </div>
 </div>
+<div class="modal fade hide" id="revModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Revision History: <span id="revTitle"></span></h3>
+  </div>
+  <div class="modal-body">
+    <div id="revBody">
+      <h2>Retrieving revision history please wait ... </h2>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
+<div class="modal fade hide" id="revViewModal" style="width: 800px; margin-left: -450px;">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Revision: <span id="revViewTitle"></span></h3>
+  </div>
+  <div class="modal-body">
+    <pre id="revViewBody">Retrieving revision please wait ...</pre>
+  </div>
+  <div class="modal-footer">
+    <a href="javascript: void(0);" class="btn btn-info" onclick="$('#revViewModal').modal('hide'); $('#revModal').modal('show');">&laquo; View Revisions</a>
+    <a href="javascript: void(0);" class="btn btn-primary" onclick="do_revert()">Revert</a>
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
 <div class="modal fade hide" id="newModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>

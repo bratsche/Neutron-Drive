@@ -1,0 +1,20 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Last Modified</th>
+      <th>File Size</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for rev in items reversed %}
+    <tr>
+      <td>{{ rev.modifiedDate }}</td>
+      <td>{{ rev.fileSize|filesizeformat }}</td>
+      <td><a href="javascript: void(0);" onclick="view_revision('{{ file_id }}', '{{ rev.modifiedDate }}', '{{ rev.downloadUrl }}')">View Revision</a></td>
+      <td><a href="javascript: void(0);" onclick="revert_revision('{{ file_id }}', '{{ rev.downloadUrl }}')">Revert</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

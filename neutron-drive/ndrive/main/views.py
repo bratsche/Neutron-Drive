@@ -196,7 +196,7 @@ def shatner (request):
     return JsonResponse({'status': 'auth_needed'})
     
   task = request.POST.get('task', '')
-  if task in ('open', 'new', 'save', 'rename', 'delete'):
+  if task in ('open', 'new', 'save', 'rename', 'delete', 'revs', 'get_url'):
     service = CreateService('drive', 'v2', creds)
     
     if service is None:
@@ -215,6 +215,30 @@ def shatner (request):
         return JsonResponse({'status': 'auth_needed'})
         
       return JsonResponse({'status': 'ok', 'file_id': file_id})
+      
+    elif task == 'revs':
+      file_id = request.POST.get('file_id', '')
+      try:
+        revisions = service.revisions().list(fileId=file_id).execute()
+        
+      except AccessTokenRefreshError:
+        return JsonResponse({'status': 'auth_needed'})
+        
+      else:
+        html = render_to_string('main/revs.html', {'file_id': file_id, 'items': revisions.get('items', [])})
+        
+      return JsonResponse({'status': 'ok', 'file_id': file_id, 'html': html})
+      
+    elif task == 'get_url':
+      file_id = request.POST.get('file_id', '')
+      url = request.POST.get('url', '')
+      try:
+        resp, content = service._http.request(url)
+        
+      except AccessTokenRefreshError:
+        return JsonResponse({'status': 'auth_needed'})
+        
+      return JsonResponse({'status': 'ok', 'file_id': file_id, 'text': content})
       
     elif task == 'open':
       file_id = request.POST.get('file_id', '')

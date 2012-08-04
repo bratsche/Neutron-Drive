@@ -82,8 +82,9 @@ function auto_save (forced) {
       $('#message_center').append('<span class="message_' + file_id +'">Saving ' + name + ' ... </span>');
       var undos = Tabs.data[file_id].session.getUndoManager().$undoStack.length;
       
-      if (forced || !Tabs.data[file_id].saved_once || Math.abs(undos - Tabs.data[file_id].undos) > 10) {
+      if (forced || force_major || !Tabs.data[file_id].saved_once || Math.abs(undos - Tabs.data[file_id].undos) > 10) {
         major = 'true';
+        force_major = false;
       }
       
       else {
@@ -131,6 +132,8 @@ var saveLoop;
 var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
+var force_major = false;
+var revert_data = '';
 set_prefs(null);
 
 $(document).ready(function () {
@@ -479,6 +482,18 @@ function add_commands () {
         $('#s_search').focus().select();
       }
   });
+  
+  Editor.commands.addCommand({
+      name: 'Search',
+      bindKey: {
+        win: 'Ctrl-H',
+        mac: 'Command-H',
+        sender: 'editor'
+      },
+      exec: function(env, args, request) {
+        rev_history();
+      }
+  });
 }
 
 function hide_right_menu () {
@@ -560,4 +575,78 @@ function delete_file (fid, title) {
       error: function () { alert('Error deleting ' + title + '.'); }
     });
   }
+}
+
+function rev_history () {
+  $('#revModal').modal('show');
+  $("#revBody").html('<h2>Retrieving revision history please wait ... </h2>');
+  
+  var ctab = Tabs.current_tab();
+  $("#revTitle").html(Tabs.data[ctab].name);
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.negotiator,
+    data: {file_id: ctab, task: 'revs'},
+    success: function (data) {
+      if (response_ok(data)) {
+        $("#revBody").html(data.html);
+      }
+    },
+    error: function () {
+      alert('Error retrieving revisions.');
+      $('#revModal').modal('hide');
+    }
+  });
+}
+
+function view_revision (fid, rev, url) {
+  $('#revModal').modal('hide');
+  $('#revViewModal').modal('show');
+  $("#revViewBody").html('Retrieving revision please wait ...');
+  
+  var ctab = Tabs.current_tab();
+  $("#revViewTitle").html(Tabs.data[ctab].name + ' - ' + rev);
+  
+  $.ajax({
+    type: 'POST',
+    url: ndrive.negotiator,
+    data: {file_id: fid, task: 'get_url', 'url': url},
+    success: function (data) {
+      if (response_ok(data)) {
+        $("#revViewBody").html(data.text);
+        revert_data = data.text;
+      }
+    },
+    error: function () {
+      alert('Error retrieving revision content.');
+      $('#revViewModal').modal('hide');
+    }
+  });
+}
+
+function revert_revision (fid, url) {
+  if (confirm('Are you sure you wish to revert?')) {
+    $.ajax({
+      type: 'POST',
+      url: ndrive.negotiator,
+      data: {file_id: fid, task: 'get_url', 'url': url},
+      success: function (data) {
+        if (response_ok(data)) {
+          Editor.getSession().setValue(data.text);
+          $('#revModal').modal('hide');
+        }
+      },
+      error: function () {
+        alert('Error retrieving revision content.');
+      }
+    });
+  }
+}
+
+function do_revert () {
+  force_major = true;
+  $('#revViewModal').modal('hide');
+  Editor.getSession().setValue(revert_data);
+  revert_data = '';
 }
