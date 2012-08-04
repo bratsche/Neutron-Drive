@@ -1,76 +1,28 @@
-{% extends "main/master.html" %}{% load static %}
+{% extends "main/master.html" %}{% load url from future %}{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static "js/colorbox/example4/colorbox.css" %}">
+<script src="{% static "js/colorbox/colorbox/jquery.colorbox.js" %}"></script>
+{% endblock %}
 {% block content %}
+<div class="floater_ad">
+  <a href="https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff">Start Coding Now &raquo;</a>
+</div>
 <h1>Welcome to Neutron Drive!</h1>
 <h3 style="margin: 0 0 20px 0;">
   A web based IDE for Google Drive.
 </h3>
-<div class="well_slideshow" id="latest_slides">
-  <div class="slides">
-    <div class="slide current">
-      <div class="left_side">
-        Narf
-      </div>
-      <div class="right_side">
-        right
-      </div>
-      <div class="clear"></div>
-      <div class="dots">
-        <span class="hl">&middot;</span>
-        <span>&middot;</span>
-        <span>&middot;</span>
-      </div>
-    </div>
-    <div class="slide next">
-      <div class="left_side">
-        Narf
-      </div>
-      <div class="right_side">
-        right
-      </div>
-      <div class="clear"></div>
-      <div class="dots">
-        <span>&middot;</span>
-        <span class="hl">&middot;</span>
-        <span>&middot;</span>
-      </div>
-    </div>
-  </div>
-</div>
-<script type="text/javascript">
-  function slideshow_next (selector, to) {
-    var ci = $(selector + '.current').index();
-    var tot = $(selector).length;
-    
-    var nci = ci + 1;
-    if (nci >= tot) { nci = 0; }
-    
-    $(selector).eq(ci).removeClass('current');
-    $(selector).eq(ci).addClass('prev');
-    
-    var nto = 0;
-    if ($(selector).eq(nci).hasClass('prev')) {
-      $(selector).eq(nci).addClass('notrans');
-      $(selector).eq(nci).addClass('next');
-      $(selector).eq(nci).removeClass('prev');
-      nto = 100;
-    }
-    
-    setTimeout(function () {
-      $(selector).eq(nci).removeClass('notrans');
-      $(selector).eq(nci).removeClass('next');
-      $(selector).eq(nci).addClass('current');
-    }, nto);
-    
-    setTimeout(function () { slideshow_next (selector, to); }, to);
-  }
-  
-  $(document).ready(function () { setTimeout(function () { slideshow_next('#latest_slides .slide', 7000) }, 7000); });
-</script>
+<p style="line-height: 1.6em;">
+  Need to make a quick code change on the go?<br>
+  Want to keep your code in sync on all your development machines?<br>
+  <strong>Try Neutron Drive!</strong>
+</p>
 <p>
   Neutron Drive is based on <a href="http://ace.ajax.org/">Ace Editor</a> and has the following features:
-  <ul>
+  <ul class="pad">
     <li>Syntax highlighting</li>
     <li>Auto indentation and outdent</li>
+    <li>Auto save to Google Drive</li>
+    <li>Google Drive revision control</li>
     <li>Themes</li>
     <li>File browser</li>
     <li>Tabbed interface</li>
@@ -78,6 +30,46 @@
   </ul>
 </p>
 <p>
-  For a more versatile web based IDE that you can run on your personal server, see <a href="http://neutronide.com/">Neutron IDE</a>.
+  <h4>Screen Shots</h4>
+</p>
+<table class="ss">
+  <tr>
+    <td>
+      <a class="group2" href="{% static "img/ss/ss1.png" %}" title="Neutron in action with several tabs open">
+        <img src="{% static "img/ss/ss1_small.png" %}" alt=""><br>
+        Neutron in action with several tabs open
+      </a>
+    </td>
+    <td>
+      <a class="group2" href="{% static "img/ss/ss2.png" %}" title="Revision history feature">
+        <img src="{% static "img/ss/ss2_small.png" %}" alt=""><br>
+        Revision history feature
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="group2" href="{% static "img/ss/ss3.png" %}" title="Editor mode dialog showing all modes available">
+        <img src="{% static "img/ss/ss3_small.png" %}" alt=""><br>
+        Editor mode dialog showing all modes available
+      </a>
+    </td>
+    <td>
+      <a class="group2" href="{% static "img/ss/ss4.png" %}" title="Preference dialog showing all editor preferences">
+        <img src="{% static "img/ss/ss4_small.png" %}" alt=""><br>
+        Preference dialog showing all editor preferences
+      </a>
+    </td>
+  </tr>
+</table>
+<script type="text/javascript">
+  $(".group2").colorbox({rel:'group2', transition:"fade"});
+</script>
+<hr>
+<p>
+  For a more versatile web based development environment that you can run on your personal server, see <a href="http://neutronide.com/">Neutron IDE</a>.
+</p>
+<p>
+  <a href="http://internetdefenseleague.org" style="margin: 0 0 20px 0; display: block;"><img src="{% static "img/super_badge.png" %}" alt="Member of The Internet Defense League" /></a>
 </p>
 {% endblock %}

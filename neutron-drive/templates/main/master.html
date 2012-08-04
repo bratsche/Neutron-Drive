@@ -31,6 +31,8 @@
             {% block nav %}
             <a href="{% url "about" %}">About</a>
             <a href="http://neutronide.com/blog/">Blog</a>
+            <a href="http://neutronide.com/">Neutron IDE</a>
+            <a href="https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff">Start Coding!</a>
             {% endblock %}
             <div class="clear"></div>
           </div>
@@ -41,19 +43,9 @@
       </div>
       <div id="main">
         <div class="wrapper">
-          {% block body %}
           <div id="content">
             {% block content %}{% endblock %}
           </div>
-          <div id="side">
-            {% block side %}
-            <a href="http://internetdefenseleague.org" style="margin: 0 0 20px 0; display: block;">
-              <img src="{% static "img/super_badge.png" %}" alt="Member of The Internet Defense League" />
-            </a>
-            {% endblock %}
-          </div>
-          <div class="clear"></div>
-          {% endblock %}
         </div>
       </div>
       <div id="footer">
