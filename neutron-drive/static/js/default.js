@@ -132,6 +132,7 @@ var saveLoop;
 var EditSession = require('ace/edit_session').EditSession;
 var UndoManager = require("ace/undomanager").UndoManager;
 var Editor = ace.edit("ace_div");
+Editor.setValue("Open or create new a file to continue.");
 var force_major = false;
 var revert_data = '';
 set_prefs(null);

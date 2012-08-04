@@ -109,17 +109,6 @@ class DriveAuth (object):
     uri = flow.step1_get_authorize_url(flow.redirect_uri)
     return http.HttpResponseRedirect(uri)
     
-def edit_old (request):
-  da = DriveAuth(request)
-  creds = da.get_credentials()
-  if creds is None:
-    return da.redirect_auth()
-    
-  response = TemplateResponse(request, 'main/edit_old.html', {})
-  response.set_signed_cookie(settings.USERID_COOKIE, value=da.userid, salt=settings.SALT)
-  
-  return response
-  
 def edit (request):
   da = DriveAuth(request)
   creds = da.get_credentials(check_cookie=False)
