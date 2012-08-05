@@ -63,7 +63,7 @@ Tabs.remove_tab = function (file_id) {
   }
   
   else {
-    Editor.setValue("Open A File to Continue");
+    Editor.setValue("Open or create a new file to continue.");
   }
   
   delete Tabs.data[file_id].session;
