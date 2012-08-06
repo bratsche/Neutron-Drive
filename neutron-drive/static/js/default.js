@@ -308,6 +308,8 @@ function add_tab (data, textStatus, jqXHR) {
     $("#emode_" + mode).get(0).checked = true;
     
     Tabs.add_file(data.file.id, data.file.title, data.file.mimeType, session);
+    
+    update_session();
   }
 }
 
@@ -650,4 +652,25 @@ function do_revert () {
   $('#revViewModal').modal('hide');
   Editor.getSession().setValue(revert_data);
   revert_data = '';
+}
+
+function update_session () {
+  if (PREFS.save_session) {
+    var flist = '';
+    for (i in Tabs.files) {
+      if (i != 0) {
+        flist = flist + ',';
+      }
+      
+      flist = flist + Tabs.files[i];
+    }
+    
+    $.ajax({
+      type: 'POST',
+      url: ndrive.save_session,
+      data: {files: flist},
+      success: function () {},
+      error: function () { alert('Error saving session.'); }
+    });
+  }
 }

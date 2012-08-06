@@ -81,4 +81,6 @@ Tabs.remove_tab = function (file_id) {
   if (tab_switch) {
     Tabs.switch_tab(tab_switch);
   }
+  
+  update_session();
 };

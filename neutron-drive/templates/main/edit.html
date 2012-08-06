@@ -134,7 +134,10 @@
       var ndrive = {};
       ndrive.CLIENT_ID = {{ CLIENT_ID }};
       ndrive.negotiator = '{% url "shatner" %}';
+      
       ndrive.prefs = '{% url "prefs" %}';
+      ndrive.save_session = '{% url "save_session" %}';
+      
       ndrive.initial_ids = [{% for id in open_ids %}'{{ id }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
       ndrive.new_in = {% if new_in %}'{{ new_in }}'{% else %}false{% endif %};
       

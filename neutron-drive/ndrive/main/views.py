@@ -134,6 +134,9 @@ def edit (request):
     elif state["action"] == 'create':
       new_in = state['parentId']
       
+  if da.prefs.save_session and da.prefs.session:
+    open_ids.extend(da.prefs.session.split(','))
+    
   c = {
     'MODES': MODES,
     'NDEBUG': settings.NDEBUG,
@@ -174,6 +177,17 @@ def prefs (request):
     
     da.prefs.save_session = request.POST.get('save_session') == 'true'
     
+    da.prefs.put()
+    
+    return JsonResponse()
+    
+def save_session (request):
+  da = DriveAuth(request)
+  creds = da.get_session_credentials()
+  if creds is not None:
+    files = request.POST.get('files', '')
+    logging.info(files)
+    da.prefs.session = files
     da.prefs.put()
     
     return JsonResponse()
