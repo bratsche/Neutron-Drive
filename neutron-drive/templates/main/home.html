@@ -4,8 +4,17 @@
 <script src="{% static "js/colorbox/colorbox/jquery.colorbox.js" %}"></script>
 {% endblock %}
 {% block content %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <div class="floater_ad">
   <a href="https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff">Start Coding Now &raquo;</a>
+  {% include "main/share.html" %}
 </div>
 <p style="line-height: 1.8em; font-size: 1.1em;">
   Need to make a quick code change on the go?<br>
@@ -56,6 +65,12 @@
         <img src="{% static "img/ss/ss4_small.png" %}" alt=""><br>
         Preference dialog showing all editor preferences
       </a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <strong>Demo Video</strong><br>
+      <iframe width="853" height="480" src="http://www.youtube.com/embed/PiyS1L1jnqw" frameborder="0" allowfullscreen></iframe>
     </td>
   </tr>
 </table>

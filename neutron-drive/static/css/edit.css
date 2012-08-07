@@ -293,3 +293,6 @@ nav .btn-toolbar {
 }
 
 
+#shareModal #social > div {
+  margin: 0 0 20px 0;
+}
