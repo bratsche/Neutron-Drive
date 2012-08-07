@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"></link>
     <link rel="stylesheet" href="{% static "css/edit.css" %}">
     <link rel="stylesheet" href="{% static "js/jqueryFileTree/jqueryFileTree.css" %}">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff">
     <title>Neutron Drive</title>
     {% if NDEBUG %}
     <!-- Excluding Analytics from Dev Environment -->
@@ -31,6 +32,7 @@
           <div class="btn-toolbar">
             <div class="name">Neutron Drive 12.08</div>
             <div class="btn-group">
+              <button class="btn" id="install-button" type="button" onclick="do_chrome_install()"><i class="icon-shopping-cart"></i> Install Chrome App</button>
               <button class="btn" type="button" onclick="open_picker()"><i class="icon-upload"></i> Open</button>
               <button class="btn" type="button" onclick="auto_save(true)"><i class="icon-download-alt"></i> Force Save</button>
               <button class="btn" type="button" onclick="close_all()"><i class="icon-remove"></i> Close All</button>

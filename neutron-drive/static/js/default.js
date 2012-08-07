@@ -191,6 +191,16 @@ $(document).ready(function () {
   }
   
   $('body').click(hide_right_menu);
+  
+  try {
+    if (chrome.app.isInstalled) {
+      $('#install-button').remove();
+    }
+  }
+  
+  catch (e) {
+    $('#install-button').remove();
+  }
 });
 
 function new_file_root () {
@@ -673,4 +683,8 @@ function update_session () {
       error: function () { alert('Error saving session.'); }
     });
   }
+}
+
+function do_chrome_install () {
+  chrome.webstore.install('https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff', function () {  $('#install-button').remove(); }, function (e) { console.log(e) });
 }
