@@ -45,8 +45,10 @@ function clear_message (fid) {
 function close_all () {
   if (confirm('Are you sure you wish to close all tabs?')) {
     while (Tabs.files.length > 0) {
-      Tabs.remove_tab(Tabs.files[0]);
+      Tabs.remove_tab(Tabs.files[0], true);
     }
+    
+    update_session();
   }
 }
 
@@ -289,7 +291,7 @@ function file_browser_open (file_id, d) {
 function response_ok (data) {
   if (data.status == 'ok') { return true; }
   else if (data.status == 'no_service') { alert('Google Drive service has been interrupted.  Please try again later.'); }
-  else if (data.status == 'auth_needed') { todo_something_to_reauth() }
+  else if (data.status == 'auth_needed') { do_reauth() }
   else {
     alert(data.status);
   }
@@ -687,4 +689,12 @@ function update_session () {
 
 function do_chrome_install () {
   chrome.webstore.install('https://chrome.google.com/webstore/detail/lanjfnanlbolmgmnchmhfnicfefjgnff', function () {  $('#install-button').remove(); }, function (e) { console.log(e) });
+}
+
+function do_reauth () {
+  if ($("#reAuthModal").css('display') == 'none') {
+    $("#reAuthModal").modal('show');
+    var ts = Date.now();
+    $("#reAuthIframe").html('<iframe width="480" height="380" src="/reauth?ts=' + ts + '" frameborder="0" allowfullscreen style="margin: 0 auto;"></iframe>');
+  }
 }

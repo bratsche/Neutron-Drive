@@ -17,7 +17,7 @@
     <a href="#" class="btn" data-dismiss="modal">Close</a>
   </div>
 </div>
-<div class="modal fade hide" id="shareModal">{% load url from future %}{% load static %}
+<div class="modal fade hide" id="shareModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
     <h3>Share Neutron Drive</h3>
@@ -26,6 +26,16 @@
     {% url 'edit' as edit_url %}
     {% with url='https://'|add:request.get_host|add:edit_url %}{% include "main/share.html" %}{% endwith %}
   </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
+<div class="modal fade hide" id="reAuthModal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Reauthorizing ... </h3>
+  </div>
+  <div class="modal-body" id="reAuthIframe"></div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Close</a>
   </div>

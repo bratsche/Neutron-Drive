@@ -46,7 +46,7 @@ Tabs.current_tab = function () {
   return $("#tab_bar span.current").get(0).id;
 }
 
-Tabs.remove_tab = function (file_id) {
+Tabs.remove_tab = function (file_id, skip_session) {
   var f = Tabs.files.indexOf(file_id);
   var sel = "#tab_bar span#" + file_id;
   var tab_switch = false;
@@ -82,5 +82,8 @@ Tabs.remove_tab = function (file_id) {
     Tabs.switch_tab(tab_switch);
   }
   
-  update_session();
+  if (skip_session) {}
+  else {
+    update_session();
+  }
 };
