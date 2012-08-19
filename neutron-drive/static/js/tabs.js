@@ -12,7 +12,15 @@ Tabs.add_html = function (file_id, name) {
   
   $("#tab_bar").append(html);
   
-  $("#tab_bar span#" + file_id + ' a').click(function () { Tabs.switch_tab(file_id, true); });
+  $("#tab_bar span#" + file_id + ' a').click(function (event) {
+    if (event.button == 1) {
+      Tabs.remove_tab(file_id);
+    }
+    
+    else {
+      Tabs.switch_tab(file_id, true);
+    }
+  });
   $("#tab_bar span#" + file_id + ' button').click(function () { Tabs.remove_tab(file_id); });
   
   $("#tab_bar").animate({scrollLeft: l}, 500);
