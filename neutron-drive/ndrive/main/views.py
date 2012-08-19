@@ -147,8 +147,10 @@ def edit (request):
       new_in = state['parentId']
       
   if da.prefs.save_session and da.prefs.session:
-    open_ids.extend(da.prefs.session.split(','))
-    
+    for oid in da.prefs.session.split(','):
+      if oid not in open_ids:
+        open_ids.append(oid)
+        
   c = {
     'MODES': MODES,
     'NDEBUG': settings.NDEBUG,
