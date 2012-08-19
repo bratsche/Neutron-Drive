@@ -123,10 +123,6 @@ nav .btn-toolbar {
   background-color: #d8d8d8;
 }
 
-#tab_bar span:first-child {
-  margin-left: 0;
-}
-
 #tab_bar span.current {
   border-bottom: 1px solid #e8e8e8;
   background-color: #E8E8E8;

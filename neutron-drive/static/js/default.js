@@ -203,7 +203,20 @@ $(document).ready(function () {
   catch (e) {
     $('#install-button').remove();
   }
+  
+  document.body.addEventListener('dragover',drag_over,false); 
+  document.body.addEventListener('drop',drop,false);
 });
+
+function drag_over (event) { 
+    event.preventDefault(); 
+    return false; 
+}
+
+function drop (event) { 
+    event.preventDefault();
+    return false;
+}
 
 function new_file_root () {
   $("#id_newfile_parent").val('');
