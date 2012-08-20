@@ -175,7 +175,6 @@ a.button {
     color: @bgColor;
     
     a {
-      .vc;
       float: left;
       
       color: @bgColor;
@@ -183,10 +182,14 @@ a.button {
       font-weight: bold;
       
       border-left: 1px solid @bgColor;
-      height: 43px;
       
       padding: 0 20px;
       font-size: 0.9em;
+      
+      > div {
+        .vc;
+        height: 43px;
+      }
       
       &.off {
         display: none;
@@ -499,5 +502,10 @@ ul.pad li {
   > div {
     margin: 0 0 15px 0;
   }
+}
+
+
+ul.pad2 li {
+  margin: 0 0 7px 7px;
 }
 

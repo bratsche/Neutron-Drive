@@ -145,29 +145,34 @@ $(document).ready(function () {
     set_sizes();
   });
   
-  var resize = $("#resize").get(0);
+  if (jQuery.browser.mozilla) {
+    $("#resizeNarf").css('display', 'none')
+  }
   
-  resize.addEventListener('dragend', function(event) {
-    var x = event.x;
-    if (x < 1) {
-      x = 1;
-    }
+  else {
+    var resize = $("#resizeNarf").get(0);
+    resize.addEventListener('dragend', function(event) {
+      var x = event.x;
+      if (x < 1) {
+        x = 1;
+      }
+      
+      $("#box_wrapper > div:first-child").width(x);
+      var m = x + 9;
+      $("#box_wrapper > div:last-child").css('margin-left', m + 'px');
+      event.stopPropagation();
+      $("#dragger").css('display', 'none');
+      $('#collapse_tools').html('&#9666');
+      
+      setTimeout(function(){ set_sizes(); }, 0);
+      setTimeout(function(){ set_sizes(); }, 100);
+    }, false);
     
-    $("#box_wrapper > div:first-child").width(x);
-    var m = x + 9;
-    $("#box_wrapper > div:last-child").css('margin-left', m + 'px');
-    event.stopPropagation();
-    $("#dragger").css('display', 'none');
-    $('#collapse_tools').html('&#9666');
-    
-    setTimeout(function(){ set_sizes(); }, 0);
-    setTimeout(function(){ set_sizes(); }, 100);
-  }, false);
-  
-  resize.addEventListener('drag', function(event) {
-    $("#dragger").css('display', 'block');
-    $("#dragger").offset({ top: 0, left: event.x - 3});
-  }, false);
+    resize.addEventListener('drag', function(event) {
+      $("#dragger").css('display', 'block');
+      $("#dragger").offset({ top: 0, left: event.x - 3});
+    }, false);
+  }
   
   add_commands();
   
@@ -351,6 +356,7 @@ function set_sizes () {
   var h = toph + 1 + tabh;
   $('#ace_div').width(winw - (toolw + 9));
   $('#box_wrapper > div').height(winh - (toph + 1));
+  $('#box_wrapper > div:nth-child(2) > div').height(winh - (toph + 1));
   $('#ace_div').height(winh - h);
   $("#box_wrapper > div:last-child").css('margin-left', (toolw + 9) + 'px');
   
