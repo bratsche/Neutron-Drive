@@ -3,12 +3,27 @@ window.onbeforeunload = function() {
 }
 
 var pickerView = new google.picker.View(google.picker.ViewId.DOCS);
-pickerView.setMimeTypes('text/plain,text/html');
+var pickerView2 = new google.picker.View(google.picker.ViewId.RECENTLY_PICKED);
+var pickerView3 = new google.picker.View(google.picker.ViewId.FOLDERS);
+var mimestring = '';
+for (i in MIMES) {
+  if (mimestring == '') {
+    mimestring = MIMES[i];
+  }
+  
+  else {
+    mimestring = mimestring + ',' + MIMES[i];
+  }
+}
+
+pickerView.setMimeTypes(mimestring);
 
 function open_picker () {
   picker = new google.picker.PickerBuilder().
     setAppId(ndrive.CLIENT_ID).
     addView(pickerView).
+    addView(pickerView2).
+    addView(pickerView3).
     setCallback(pickerCallback).
     enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
     build();

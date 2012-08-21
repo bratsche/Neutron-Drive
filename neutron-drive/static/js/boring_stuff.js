@@ -144,6 +144,7 @@ var MIMES = [
   'text/html',
   'text/x-csrc',
   'text/x-python',
-  'text/x-java'
+  'text/x-java',
+  'application/x-sql'
 ];
 
