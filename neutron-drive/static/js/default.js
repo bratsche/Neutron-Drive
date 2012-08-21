@@ -352,7 +352,7 @@ function add_tab (data, textStatus, jqXHR) {
     Editor.focus();
     $("#emode_" + mode).get(0).checked = true;
     
-    Tabs.add_file(data.file.id, data.file.title, data.file.mimeType, session);
+    Tabs.add_file(data.file.id, data.file.title, data.file.mimeType, session, mode);
     
     update_session();
   }
@@ -382,12 +382,23 @@ function set_sizes () {
   Editor.resize();
 }
 
+function get_editor_mode () {
+  var c = Tabs.current_tab();
+  if (c) {
+    var mode = Tabs.data[c].mode;
+    $("#emode_" + mode).get(0).checked = true;
+  }
+}
+
 function set_editor_mode (mode) {
   var sess = Editor.getSession();
   var Mode = require("ace/mode/" + mode).Mode;
   sess.setMode(new Mode());
   
   $('#modeModal').modal('hide');
+  
+  var c = Tabs.current_tab();
+  Tabs.data[c].mode = mode;
   Editor.focus();
 }
 

@@ -30,7 +30,7 @@ Tabs.add_html = function (file_id, name) {
   $("#tab_drop").append(html2);
 }
 
-Tabs.add_file = function (file_id, name, mime, session) {
+Tabs.add_file = function (file_id, name, mime, session, mode) {
   Tabs.files.push(file_id);
   Tabs.data[file_id] = {
     name: name,
@@ -38,7 +38,8 @@ Tabs.add_file = function (file_id, name, mime, session) {
     session: session,
     md5hash: md5(session.getValue()),
     undos: 0,
-    saved_once: false
+    saved_once: false,
+    mode: mode
   };
   
   Tabs.add_html(file_id, name);
