@@ -102,7 +102,7 @@ var FILE_EXTS = {
   
   'svg': 'svg',
   
-  'txt': 'text', 'text': 'text',
+  'txt': 'text', 'text': 'text', 'readme': 'text',
   
   'xml': 'xml', 'rss': 'xml', 'atom': 'xml',
   
@@ -122,29 +122,29 @@ var FILE_EXTS = {
 };
 
 var MIMES = [
-  'text/css',
-  'text/x-diff',
-  'application/javascript',
-  'application/x-latex',
-  'text/x-tex',
-  'image/svg+xml',
-  'text/x-perl',
-  'application/java-vm',
-  'application/x-sql',
-  'application/x-httpd-php',
-  'text/x-sh',
-  'application/xml',
-  'application/x-ruby',
-  'application/rss+xml',
-  'application/atom+xml',
-  'text/x-scala',
-  'text/plain',
-  'text/x-c++src',
-  'application/json',
-  'text/html',
-  'text/x-csrc',
-  'text/x-python',
-  'text/x-java',
-  'application/x-sql'
+  "text/css",
+  "text/x-diff",
+  "application/javascript",
+  "application/x-latex",
+  "text/x-tex",
+  "image/svg+xml",
+  "text/x-perl",
+  "application/java-vm",
+  "application/x-sql",
+  "application/x-httpd-php",
+  "text/x-sh",
+  "application/xml",
+  "application/x-ruby",
+  "application/rss+xml",
+  "application/atom+xml",
+  "text/x-scala",
+  "text/plain",
+  "text/x-c++src",
+  "application/json",
+  "text/html",
+  "text/x-csrc",
+  "text/x-python",
+  "text/x-java",
+  "application/x-sql"
 ];
 

@@ -5,18 +5,6 @@ window.onbeforeunload = function() {
 var pickerView = new google.picker.View(google.picker.ViewId.DOCS);
 var pickerView2 = new google.picker.View(google.picker.ViewId.RECENTLY_PICKED);
 var pickerView3 = new google.picker.View(google.picker.ViewId.FOLDERS);
-var mimestring = '';
-for (i in MIMES) {
-  if (mimestring == '') {
-    mimestring = MIMES[i];
-  }
-  
-  else {
-    mimestring = mimestring + ',' + MIMES[i];
-  }
-}
-
-pickerView.setMimeTypes(mimestring);
 
 function open_picker () {
   picker = new google.picker.PickerBuilder().
@@ -32,22 +20,33 @@ function open_picker () {
 
 function pickerCallback (data) {
   if (data.action == google.picker.Action.PICKED) {
+    var exts = Object.keys(FILE_EXTS);
+    
     for (i in data.docs) {
       var file_id = data.docs[i].id;
       var name = data.docs[i].name;
+      var ext = name.toLowerCase().split('.').pop();
       
-      if (Tabs.files.indexOf(file_id) < 0) {
-        $.ajax({
-          type: 'POST',
-          url: ndrive.negotiator,
-          data: {'file_id': file_id, 'task': 'open'},
-          success: add_tab,
-          error: function () { alert('Error opening file ' + name); }
-        });
+      if (ext != '' && exts.indexOf(ext) >= 0) {
+        if (Tabs.files.indexOf(file_id) < 0) {
+          $.ajax({
+            type: 'POST',
+            url: ndrive.negotiator,
+            data: {'file_id': file_id, 'task': 'open'},
+            success: add_tab,
+            error: function () { alert('Error opening file ' + name); }
+          });
+        }
+        
+        else {
+          Tabs.switch_tab(file_id);
+        }
       }
       
       else {
-        Tabs.switch_tab(file_id);
+        $("#hiddenLink").attr('href', data.docs[i].url);
+        $("#hiddenLink").html('Open ' + name);
+        $('#linkModal').modal('show');
       }
     }
   }
@@ -298,7 +297,7 @@ function file_browser_open (file_id, d) {
   
   var exts = Object.keys(FILE_EXTS);
   
-  if (MIMES.indexOf(d.mime) >= 0 || (d.ext != '' && exts.indexOf(d.ext) >= 0)) {
+  if (d.title.toLowerCase() == 'readme' || MIMES.indexOf(d.mime) >= 0 || (d.ext != '' && exts.indexOf(d.ext) >= 0)) {
     if (Tabs.files.indexOf(file_id) < 0) {
       $.ajax({
         type: 'POST',

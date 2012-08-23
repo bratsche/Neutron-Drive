@@ -4,6 +4,10 @@
   background-color: #E8E8E8;
 }
 
+body a:focus {
+  outline: 0;
+}
+
 h3 {
   font-weight: normal;
   padding: 2px 5px;
@@ -132,7 +136,7 @@ nav .btn-toolbar {
 #tab_bar span a {
   color: #333;
   width: 100px;
-  height: 16px;
+  height: 18px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
